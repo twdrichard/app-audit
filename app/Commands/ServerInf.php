@@ -41,7 +41,7 @@ class ServerInf extends Command
             'is Linux'      => "if \"true\" == ',('; then echo Linux; fi;true \) else echo Windows",
         ];
         foreach ($basic_server_info as $info_name => $command) {
-            $value = $this->executeCommand($command);
+            $value = $this->server->executeCommand($command);
             $this->info($info_name . ": " . $value);
         }
         $this->info('Linux version: ' . $this->findLinuxVersion());
