@@ -5,6 +5,8 @@ namespace App\Commands;
 use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 
+use App\Helpers\Server;
+
 class ServerInf extends Command
 {
     /**
@@ -12,20 +14,25 @@ class ServerInf extends Command
      *
      * @var string
      */
-    protected $signature = 'serverInf';
+    protected $signature = 'serverinf {server=local}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Show server information';
+
+    protected Server $server;
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
+        $server_name = $this->argument('server');
+        $this->server = new Server($server_name);
+
         $this->info("Hello, " . $this->findUsername() .  "!");
         $basic_server_info = [
             'hostname'      => "hostname",
@@ -41,19 +48,7 @@ class ServerInf extends Command
     }
 
 	protected function findUsername() : string {
-		$command = "whoami";
-		$output = [];
-		exec($command, $output, $result);
-		if ($result == 0) {
-			if ($output && count($output)) {
-				$name = reset($output);
-				if ($name) {
-					$this->username = $name;
-					return ucfirst($name);
-				}
-			}
-		}
-		return "stranger";
+        return ucfirst($this->server->executeCommand("whoami"));
 	}
 
     protected function findLinuxVersion() : string {
@@ -100,8 +95,8 @@ class ServerInf extends Command
     /**
      * Define the command's schedule.
      */
-    public function schedule(Schedule $schedule): void
+    /*public function schedule(Schedule $schedule): void
     {
         // $schedule->command(static::class)->everyMinute();
-    }
+    }*/
 }
