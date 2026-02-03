@@ -34,6 +34,9 @@ class ServerInf extends Command
         $this->server = new Server($server_name);
 
         $this->info("Hello, " . $this->findUsername() .  "!");
+        //$this->info('Local linux version: ' . $this->findLinuxVersion());
+
+        $this->info("Server info:");
         $basic_server_info = [
             'hostname'      => "hostname",
             'PHP version'   => "php --version",
@@ -44,59 +47,24 @@ class ServerInf extends Command
             $value = $this->server->executeCommand($command);
             $this->info($info_name . ": " . $value);
         }
-        $this->info('Linux version: ' . $this->findLinuxVersion());
+
+        $linux_version = $this->server->findLinuxPrettyName();
+        if ($linux_version) {
+            $this->info("Linux version: " . $linux_version);
+        }
+
+        $website_info = $this->server->findHostingInfo();
+        if ($website_info) {
+            foreach ($website_info as $website_info_line) {
+                $this->info($website_info_line);
+            }
+        } else {
+            $this->info("No hosting information found.");
+        }
     }
 
 	protected function findUsername() : string {
         return ucfirst($this->server->executeCommand("whoami"));
 	}
 
-    protected function findLinuxVersion() : string {
-        $command = "cat /etc/*release";
-		$output = [];
-        $version_name = "unknown";
-		exec($command, $output, $result);
-		if ($result == 0) {
-            $version_name = "";
-            $os_name = "";
-            $os_version = "";
-            foreach ($output as $line) {
-                if ($line) {
-                    $ar = explode("=", $line);
-                    if ($ar && count($ar) > 1) {
-                        $item_name = $ar[0];
-                        $value = str_replace('"', '', $ar[1]);
-                        if ($item_name == "NAME") {
-                            $os_name = $value;
-                        }
-                        if ($item_name == "VERSION") {
-                            $os_version = $value;
-                        }
-                    }
-                }
-            }
-            $version_name = $os_name . ' ' . $os_version;
-        }
-        return $version_name;
-    }
-
-    protected function executeCommand(string $command) : string {
-		$output = [];
-		exec($command, $output, $result);
-		if ($result == 0) {
-			if ($output && count($output)) {
-				return reset($output);
-			}
-            return implode("\n", $output);
-		}
-		return "none.";
-    }
-
-    /**
-     * Define the command's schedule.
-     */
-    /*public function schedule(Schedule $schedule): void
-    {
-        // $schedule->command(static::class)->everyMinute();
-    }*/
 }
