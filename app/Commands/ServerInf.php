@@ -6,6 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 
 use App\Helpers\Server;
+use App\Helpers\SiteInspector;
 
 class ServerInf extends Command
 {
@@ -24,6 +25,7 @@ class ServerInf extends Command
     protected $description = 'Show server information';
 
     protected Server $server;
+    protected SiteInspector $inspector;
 
     /**
      * Execute the console command.
@@ -53,18 +55,11 @@ class ServerInf extends Command
             $this->info("Linux version: " . $linux_version);
         }
 
-        $website_info = $this->server->findHostingInfo();
-        if ($website_info) {
-            foreach ($website_info as $website_info_line) {
-                $this->info($website_info_line);
-            }
-        } else {
-            $this->info("No hosting information found.");
-        }
+        $this->inspector = new SiteInspector($this->server);
+        $this->info('Application type: ' . $this->inspector->findApplicationType());
     }
 
 	protected function findUsername() : string {
         return ucfirst($this->server->executeCommand("whoami"));
 	}
-
 }

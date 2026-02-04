@@ -17,7 +17,7 @@ class Server {
         if ($this->is_local) {
             $this->folder = '/var/www/html/';
         } else {
-            $this->folder = $this->executeCommand('pwd');
+            $this->folder = 'httpdocs/'; //$this->executeCommand('pwd'); // NB search for an appropriate web root
         }
     }
 
@@ -68,7 +68,7 @@ class Server {
      **/
 
     public function findHostingInfo() : ?array {
-		$wordpress_spec = [
+        $wordpress_spec = [
 			[ 'wp-config.php', 'file', '' ],
 			[ 'wp-content',	'folder', '' ],
 		];
@@ -139,7 +139,6 @@ class Server {
 		$full_filename .= $filename;
 		//echo "findFileInfo for '$full_filename'" . PHP_EOL;
 		// do we see the output here because we're doing an ls
-        //$output = $this->executeCommand('ls -la ' . $this->escapeString($full_filename) . " 2>&1");
 		$command = $this->getSSHCommand('ls -la ' . $this->escapeString($full_filename) . " 2>&1");
 		echo $command . PHP_EOL;
 		//echo "...about to shell_exec..." . PHP_EOL;
@@ -162,7 +161,6 @@ class Server {
 
 
 	protected function escapeString($s) {
-		//return str_replace(' ', '\ ', $s);
 		return "'" . $s . "'";
 	}
 }
