@@ -38,12 +38,18 @@ class ServerInf extends Command
         $this->info("Hello, " . $this->findUsername() .  "!");
         //$this->info('Local linux version: ' . $this->findLinuxVersion());
 
+        $wp_logo_filename = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'wordpress-ascii-logo.txt';
+        $logo = file_get_contents($wp_logo_filename);
+        //echo "Reading wp logo from $wp_logo_filename" . PHP_EOL;
+        echo $logo;
+        //exit;
+
         $this->info("Server info:");
         $basic_server_info = [
             'hostname'      => "hostname",
             'PHP version'   => "php --version",
             //'OS version'    => "uname -svrm",
-            'is Linux'      => "if \"true\" == ',('; then echo Linux; fi;true \) else echo Windows",
+           // 'is Linux'      => "if \"true\" == ',('; then echo Linux; fi;true \) else echo Windows",
         ];
         foreach ($basic_server_info as $info_name => $command) {
             $value = $this->server->executeCommand($command);
@@ -55,8 +61,11 @@ class ServerInf extends Command
             $this->info("Linux version: " . $linux_version);
         }
 
+        echo $logo . PHP_EOL;
+
         $this->inspector = new SiteInspector($this->server);
         $this->info('Application type: ' . $this->inspector->findApplicationType());
+        $this->info($this->inspector->getDescription());
     }
 
 	protected function findUsername() : string {

@@ -21,6 +21,10 @@ class Server {
         }
     }
 
+    public function getFolder() : string {
+        return $this->folder;
+    }
+
     public function executeCommand(string $command) : string {
         if ($this->is_local) {
             return $this->executeLocalCommand($command);
@@ -33,9 +37,9 @@ class Server {
 		$output = [];
 		exec($command, $output, $result);
 		if ($result == 0) {
-			if ($output && count($output)) {
+			/*if ($output && count($output)) {
 				return reset($output);
-			}
+			}*/
             return implode("\n", $output);
 		}
 		return "none.";
