@@ -8,21 +8,25 @@
 namespace App\Helpers;
 
 class Server {
-    protected string $server_name, $folder;
+    protected string $server_name, $path;
     protected bool $is_local;
 
-    public function __construct(string $server_name) {
+    public function __construct(string $server_name, string $path) {
         $this->server_name = $server_name;
         $this->is_local = ($server_name == "local");
-        if ($this->is_local) {
-            $this->folder = '/var/www/html/';
+        if ($path) {
+            $this->path = $path;
         } else {
-            $this->folder = 'httpdocs/'; //$this->executeCommand('pwd'); // NB search for an appropriate web root
+            if ($this->is_local) {
+                $this->path = '/var/www/html/';
+            } else {
+                $this->path = 'httpdocs/'; //$this->executeCommand('pwd'); // NB search for an appropriate web root
+            }
         }
     }
 
     public function getFolder() : string {
-        return $this->folder;
+        return $this->path;
     }
 
     public function executeCommand(string $command) : string {
@@ -136,7 +140,7 @@ class Server {
 	}
 
 	protected function findFileInfo($filename, $folder) {
-		$full_filename = trim($this->folder) . DIRECTORY_SEPARATOR;
+		$full_filename = trim($this->path) . DIRECTORY_SEPARATOR;
 		if ($folder) {
 			$full_filename .= $folder . DIRECTORY_SEPARATOR;
 		}

@@ -15,7 +15,7 @@ class ServerInf extends Command
      *
      * @var string
      */
-    protected $signature = 'serverinf {server=local}';
+    protected $signature = 'serverinf {server} {path?}';
 
     /**
      * The console command description.
@@ -33,8 +33,9 @@ class ServerInf extends Command
     public function handle()
     {
         $server_name = $this->argument('server');
-        $this->server = new Server($server_name);
+        $path = $this->argument('path');
 
+        $this->server = new Server($server_name, $path);
         $this->info("Hello, " . $this->findUsername() .  "!");
         //$this->info('Local linux version: ' . $this->findLinuxVersion());
 
