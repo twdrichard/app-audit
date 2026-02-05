@@ -43,21 +43,24 @@ class SiteInspector {
         if ($this->application != null) {
             $logo = $this->getAsciiLogo();
             $description = $this->application->getDescription();
-            return $this->combineTextSideBySide($logo, $description);
+            $red = "\033[0;31m";
+            $cyan = "\033[0;36m";
+            $yellow = "\033[0;33m";
+            return $this->combineTextSideBySide($logo, $description, $yellow, $cyan);
         } else {
             return "No application found." . PHP_EOL;
         }
     }
 
-    protected function combineTextSideBySide(string $text1, string $text2) : string {
+    protected function combineTextSideBySide(string $text1, string $text2, string $color1, string $color2) : string {
         $lines1 = explode(PHP_EOL, $this->padTextToEqualLineLength($text1));
         $lines2 = explode(PHP_EOL, $text2);
         $line_number = 0;
         $output = "";
         foreach ($lines1 as $line_left) {
-            $output .= $line_left;
+            $output .= $color1 . $line_left;
             if (isset($lines2[$line_number])) {
-                $output .= $lines2[$line_number];
+                $output .= $color2 . $lines2[$line_number];
             }
             $output .= PHP_EOL;
             $line_number++;

@@ -58,7 +58,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
     }
 
     public function getAsciiLogo() : string {
-       $wp_logo_filename = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'wordpress-ascii-logo.txt';
+       $wp_logo_filename = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'ascii-art' . DIRECTORY_SEPARATOR . 'wordpress-ascii-logo.txt';
        $logo = file_get_contents($wp_logo_filename);
        return $this->formatLogo($logo);
     }
