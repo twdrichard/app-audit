@@ -18,7 +18,6 @@ class WordPressApplicationInspector extends ApplicationInspector {
         $this->server = $server;
 
         $info = $server->executeCommand("wp --version");
-        //echo "Found wp version $info" . PHP_EOL;
         if (strpos($info, "WP-CLI") !== false) {
             // we've found wp-cli
             $this->has_cli = true;
@@ -51,10 +50,46 @@ class WordPressApplicationInspector extends ApplicationInspector {
     protected function getPluginsList() : string {
         if ($this->has_cli) {
             $folder = $this->server->getFolder();
-            return $this->server->executeCommand("wp --path=$folder plugin list");
+            $plugin_list = $this->server->executeCommand("wp --path=$folder plugin list");
+            return $this->formatPluginsList($plugin_list);
         } else {
             return "Plugins not found." . PHP_EOL;
         }
+    }
+
+    protected function formatPluginsList(string $plugins_list) {
+        $lines = explode(PHP_EOL, $plugins_list);
+        $colors = $this->getColors();
+        $plugin_lines = [];
+        $num_lines = count($lines);
+        if ($lines && $num_lines > 2) {
+            for ($i = 0; $i < $num_lines; $i++) {
+                if ($i > 0 && $i < $num_lines+1) {
+                    $line = $lines[$i];
+                    $stripped_line = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $line);       // remove multiple spaces
+                    if ($stripped_line) {
+                        $plugin_info = explode(' ', $stripped_line);
+                        if ($plugin_info && count($plugin_info) > 3) {
+                            $plugin_name = $plugin_info[0];
+                            $status = $plugin_info[1];
+                            if ($status == 'active') {
+                                $update_available = $plugin_info[2];
+                                $version = $plugin_info[3];
+                                $plugin_description = $colors['blue'];
+                                $plugin_description .= $plugin_name;
+                                if ($update_available == 'available') {
+                                    $plugin_description .= $colors['red'];
+                                }
+                                $plugin_description .= ' version ' . $version;
+                                $plugin_lines []= $plugin_description . PHP_EOL;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //return $plugins_list;
+        return "Active plugins:" . PHP_EOL . implode(PHP_EOL, $plugin_lines);
     }
 
     public function getAsciiLogo() : string {

@@ -43,7 +43,7 @@ class SiteInspector {
         if ($this->application != null) {
             $logo = $this->getAsciiLogo();
             $description = $this->application->getDescription();
-            $red = "\033[0;31m";
+            // color codes from https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
             $cyan = "\033[0;36m";
             $yellow = "\033[0;33m";
             return $this->combineTextSideBySide($logo, $description, $yellow, $cyan);
