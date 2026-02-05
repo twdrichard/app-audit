@@ -79,9 +79,11 @@ class WordPressApplicationInspector extends ApplicationInspector {
                                 $plugin_description .= $plugin_name;
                                 if ($update_available == 'available') {
                                     $plugin_description .= $colors['red'];
+                                    $plugin_description .= ' v' . $version . ' (out of date)';
+                                } else {
+                                    $plugin_description .= ' v' . $version;
                                 }
-                                $plugin_description .= ' version ' . $version;
-                                $plugin_lines []= $plugin_description . PHP_EOL;
+                                $plugin_lines []= $plugin_description;
                             }
                         }
                     }
