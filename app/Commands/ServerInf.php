@@ -36,14 +36,7 @@ class ServerInf extends Command
         $path = $this->argument('path');
 
         $this->server = new Server($server_name, $path);
-        $this->info("Hello, " . $this->findUsername() .  "!");
-        //$this->info('Local linux version: ' . $this->findLinuxVersion());
-
-        $wp_logo_filename = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'wordpress-ascii-logo.txt';
-        $logo = file_get_contents($wp_logo_filename);
-        //echo "Reading wp logo from $wp_logo_filename" . PHP_EOL;
-        echo $logo;
-        //exit;
+        //$this->info("Hello, " . $this->findUsername());
 
         $this->info("Server info:");
         $basic_server_info = [
@@ -62,11 +55,12 @@ class ServerInf extends Command
             $this->info("Linux version: " . $linux_version);
         }
 
-        echo $logo . PHP_EOL;
+        $this->info("");
 
+        //$this->info("Application info:");
         $this->inspector = new SiteInspector($this->server);
-        $this->info('Application type: ' . $this->inspector->findApplicationType());
-        $this->info($this->inspector->getDescription());
+        $this->inspector->findApplicationType();
+        $this->info($this->inspector->getFormattedDescription());
     }
 
 	protected function findUsername() : string {
