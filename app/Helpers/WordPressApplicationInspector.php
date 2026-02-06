@@ -17,7 +17,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
         $this->has_cli = false;
         $this->server = $server;
 
-        $info = $server->executeCommand("wp --version");
+        $info = $server->executeCommand("wp --version");	// check the core version instead?
         if (strpos($info, "WP-CLI") !== false) {
             // we've found wp-cli
             $this->has_cli = true;
@@ -40,7 +40,8 @@ class WordPressApplicationInspector extends ApplicationInspector {
 
     public function getDomain() : string {
         //$command = "db query \"SELECT option_value FROM wp_options WHERE option_name='siteurl' LIMIT 1;\"";     // works on loc but not remote
-        $command = "db query \"SELECT option_value FROM wp_options WHERE option_name=\''siteurl\'' LIMIT 1;\"";
+        //$command = "db query \"SELECT option_value FROM wp_options WHERE option_name=\''siteurl\'' LIMIT 1;\"";
+        $command = "\"db query \"SELECT option_value FROM wp_options WHERE option_name=\''siteurl\'' LIMIT 1;\"\"";
         // remote error is
         // Error: Too many positional arguments
 
@@ -65,7 +66,13 @@ class WordPressApplicationInspector extends ApplicationInspector {
     public function getDescription() {
         $colors = $this->getColors();
         $s = $colors['yellow'] . $this->getDomain() . PHP_EOL;
-        $s .= $colors['blue'] .  "WordPress site, core version " . $this->getCoreVersion() . PHP_EOL;
+        $s .= $colors['blue'] .  "WordPress site, core version " . $this->getCoreVersion();
+        if ($this->coreIsOutOfDate()) {
+			  $s .= $colors['red'] . ' (out of date)';
+			} else {
+			  $s .= $colors['green'] . ' (latest version)';
+			}
+			$s .= PHP_EOL;
         $s.= $this->getPluginsList();
         return $s;
     }
@@ -86,6 +93,17 @@ class WordPressApplicationInspector extends ApplicationInspector {
             return "unknown";
         }
     }
+
+    protected function coreIsOutOfDate() : bool {
+        if ($this->has_cli) {
+            $command = $this->buildWPCommand("core check-update");
+            $response = $this->server->executeCommand($command);
+            if (strpos($response, "Success: WordPress is at the latest version.") !== false) {
+					return false;		// ok we're already at the latest version
+				}
+			}
+			return true;
+     	 }
 
     protected function getPluginsList() : string {
         if ($this->has_cli) {
