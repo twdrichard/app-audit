@@ -46,33 +46,15 @@ class WordPressApplicationInspector extends ApplicationInspector {
      **/
 
     public function getDomain() : string {
-        //$command = "db query \"SELECT option_value FROM wp_options WHERE option_name='siteurl' LIMIT 1;\"";     // works on loc but not remote
-        //$command = "db query \"SELECT option_value FROM wp_options WHERE option_name=\''siteurl\'' LIMIT 1;\"";
-        $command = "\"db query \"SELECT option_value FROM wp_options WHERE option_name=\''siteurl\'' LIMIT 1;\"\"";
-        // remote error is
-        // Error: Too many positional arguments
-
-        // this is encoding the ssh
-
-        //$command = $this->escapeString($command);
+		  $command = "option get siteurl";
         $command = $this->buildWPCommand($command);
-        echo "Looking for domain:" . PHP_EOL;
-        echo $command . PHP_EOL;
-        $domain_info = $this->server->executeCommand($command);
-//        echo "Domain info: " . PHP_EOL;
-        //echo $domain_info . PHP_EOL;
-        $ar = explode(PHP_EOL, $domain_info);
-        print_r($ar);
-        echo PHP_EOL;
-        if (is_array($ar) && array_key_exists(1, $ar) > 0) {
-            return $ar[1];
-        }
-        return "https://WordPress.com";
+        return $this->server->executeCommand($command);
     }
 
     public function getDescription() {
         $colors = $this->getColors();
-        $s = $colors['yellow'] . $this->getDomain() . PHP_EOL;
+        $s = $colors['green'] . "Linux version: " . $this->server->findLinuxPrettyName() . PHP_EOL;
+        $s .= $colors['yellow'] . $this->getDomain() . PHP_EOL;
         $s .= $colors['blue'] .  "WordPress site, core version " . $this->getCoreVersion();
         if ($this->coreIsOutOfDate()) {
 			  $s .= $colors['red'] . ' (out of date)';

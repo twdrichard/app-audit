@@ -49,12 +49,12 @@ class ServerInf extends Command
             $this->info($info_name . ": " . $value);
         }*/
 
-        $linux_version = $this->server->findLinuxPrettyName();
+        /*$linux_version = $this->server->findLinuxPrettyName();
         if ($linux_version) {
             $this->info("Linux version: " . $linux_version);
-        }
+        }*/
 
-        $this->info("");
+        //$this->info("");
 
         $this->inspector = new SiteInspector($this->server);
         if (!$this->inspector->findApplicationType()) {
