@@ -15,7 +15,7 @@ class ServerInf extends Command
      *
      * @var string
      */
-    protected $signature = 'serverinf {server} {path?}';
+    protected $signature = 'serverinf {server} {path=httpdocs}';
 
     /**
      * The console command description.
