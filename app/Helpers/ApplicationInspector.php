@@ -14,7 +14,7 @@ class ApplicationInspector {
     protected bool $is_valid;
 
     public function __construct() {
-        $this->is_valid = false;
+        $this->is_valid = true;
     }
 
     public function isOnServer(Server $server) {

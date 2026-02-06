@@ -29,21 +29,24 @@ class SiteInspector {
         return "https://example.com";
     }
 
-    public function findApplicationType() {
+    public function findApplicationType() : ?string {
+        if ($this->application != null) {
+            return $this->application->getName();
+        }
         foreach ($this->applications as $application) {
             if ($application->isOnServer($this->server)) {
                 $this->application = $application;
                 return $application->getName();
             }
         }
-        return "Unknown";
+        return null;
     }
 
     public function isValidInstallation() : bool {
        if ($this->application != null) {
             return $this->application->isValidInstallation();
         } else {
-            false;
+            return false;
         }
     }
 

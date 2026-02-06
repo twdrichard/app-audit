@@ -56,9 +56,11 @@ class ServerInf extends Command
 
         $this->info("");
 
-        //$this->info("Application info:");
         $this->inspector = new SiteInspector($this->server);
-        $this->inspector->findApplicationType();
+        if (!$this->inspector->findApplicationType()) {
+			  echo "No application type found." . PHP_EOL;
+			  exit();
+			 }
         if (!$this->inspector->isValidInstallation()) {
 			  $this->info("Sorry, I'm not recognizing a valid site here.");
 		  } else {
