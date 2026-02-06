@@ -21,6 +21,14 @@ class SiteInspector {
         ];
     }
 
+    public function getName() : string {
+        return "application";
+    }
+
+    public function getDomain() : string {
+        return "https://example.com";
+    }
+
     public function findApplicationType() {
         foreach ($this->applications as $application) {
             if ($application->isOnServer($this->server)) {
@@ -31,7 +39,7 @@ class SiteInspector {
         return "Unknown";
     }
 
-    public function getDescription() {
+    public function getDescription() : string {
         if ($this->application != null) {
             return $this->application->getDescription();
         } else {
@@ -39,14 +47,12 @@ class SiteInspector {
         }
     }
 
-    public function getFormattedDescription() {
+    public function getFormattedDescription() : string {
         if ($this->application != null) {
             $logo = $this->getAsciiLogo();
+            $colors = $this->application->getColors();
             $description = $this->application->getDescription();
-            // color codes from https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
-            $cyan = "\033[0;36m";
-            $yellow = "\033[0;33m";
-            return $this->combineTextSideBySide($logo, $description, $yellow, $cyan);
+            return $this->combineTextSideBySide($logo, $description, $colors['yellow'], $colors['cyan']);
         } else {
             return "No application found." . PHP_EOL;
         }

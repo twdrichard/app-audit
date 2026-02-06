@@ -38,7 +38,7 @@ class ApplicationInspector {
         Light Gray   0;37     White         1;37
      **/
 
-    protected function getColors() : array {
+    public function getColors() : array {
         return [
             'cyan'      => "\033[0;36m",
             'yellow'    => "\033[0;33m",

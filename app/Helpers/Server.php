@@ -20,7 +20,7 @@ class Server {
             if ($this->is_local) {
                 $this->path = '/var/www/html/';
             } else {
-                $this->path = 'httpdocs/'; //$this->executeCommand('pwd'); // NB search for an appropriate web root
+                $this->path = 'httpdocs/';
             }
         }
     }

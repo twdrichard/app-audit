@@ -27,21 +27,61 @@ class WordPressApplicationInspector extends ApplicationInspector {
         }
     }
 
-    public function getName() {
+    public function getName() : string {
         return "WordPress";
     }
 
+    /**
+     * @function getDomain
+     * Use wp "db query" command to look up the siteurl
+     * NB directly on the command line we can use
+     * wp --path=/var/www/html/wp/ db query "SELECT option_value FROM wp_options WHERE option_name='siteurl' LIMIT 1;"
+     **/
+
+    public function getDomain() : string {
+        //$command = "db query \"SELECT option_value FROM wp_options WHERE option_name='siteurl' LIMIT 1;\"";     // works on loc but not remote
+        $command = "db query \"SELECT option_value FROM wp_options WHERE option_name=\''siteurl\'' LIMIT 1;\"";
+        // remote error is
+        // Error: Too many positional arguments
+
+        // this is encoding the ssh
+
+        //$command = $this->escapeString($command);
+        $command = $this->buildWPCommand($command);
+        echo "Looking for domain:" . PHP_EOL;
+        echo $command . PHP_EOL;
+        $domain_info = $this->server->executeCommand($command);
+//        echo "Domain info: " . PHP_EOL;
+        //echo $domain_info . PHP_EOL;
+        $ar = explode(PHP_EOL, $domain_info);
+        print_r($ar);
+        echo PHP_EOL;
+        if (is_array($ar) && array_key_exists(1, $ar) > 0) {
+            return $ar[1];
+        }
+        return "https://WordPress.com";
+    }
+
     public function getDescription() {
-        $s = "Application type: WordPress" . PHP_EOL;
-        $s .= "WordPress core version: " . $this->getCoreVersion() . PHP_EOL;
+        $colors = $this->getColors();
+        $s = $colors['yellow'] . $this->getDomain() . PHP_EOL;
+        $s .= $colors['blue'] .  "WordPress site, core version " . $this->getCoreVersion() . PHP_EOL;
         $s.= $this->getPluginsList();
         return $s;
+    }
+	protected function escapeString($s) {
+		//return str_replace(' ', '\ ', $s);
+		return "'" . $s . "'";
+	}
+    protected function buildWPCommand(string $command) : string {
+        $folder = $this->server->getFolder();
+        return "wp --path=$folder " . $command;
     }
 
     protected function getCoreVersion() : string {
         if ($this->has_cli) {
-            $folder = $this->server->getFolder();
-            return $this->server->executeCommand("wp --path=$folder core version");
+            $command = $this->buildWPCommand("core version");
+            return $this->server->executeCommand($command);
         } else {
             return "unknown";
         }
@@ -83,7 +123,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
                                 } else {
                                     $plugin_description .= ' v' . $version;
                                 }
-                                $plugin_lines []= $plugin_description;
+                                $plugin_lines []= '   ' . $plugin_description;
                             }
                         }
                     }

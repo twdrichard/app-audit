@@ -38,8 +38,7 @@ class ServerInf extends Command
         $this->server = new Server($server_name, $path);
         //$this->info("Hello, " . $this->findUsername());
 
-        $this->info("Server info:");
-        $basic_server_info = [
+        /*$basic_server_info = [
             'hostname'      => "hostname",
             'PHP version'   => "php --version",
             //'OS version'    => "uname -svrm",
@@ -48,7 +47,7 @@ class ServerInf extends Command
         foreach ($basic_server_info as $info_name => $command) {
             $value = $this->server->executeCommand($command);
             $this->info($info_name . ": " . $value);
-        }
+        }*/
 
         $linux_version = $this->server->findLinuxPrettyName();
         if ($linux_version) {
