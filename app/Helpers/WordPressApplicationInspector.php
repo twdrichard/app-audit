@@ -16,8 +16,16 @@ class WordPressApplicationInspector extends ApplicationInspector {
     public function isOnServer(Server $server) {    // nb check for wp-config file not wp cli?
         $this->has_cli = false;
         $this->server = $server;
+        $this->valid = true;
 
-        $info = $server->executeCommand("wp --version");	// check the core version instead?
+        // first check if we have WordPress instance here
+        $info = $server->executeCommand("wp core version");
+        if (strpos($info, "This does not seem to be a WordPress installation.") !== false) {
+				$this->is_valid = false;
+				return false;
+			}
+
+        $info = $server->executeCommand("wp --version");
         if (strpos($info, "WP-CLI") !== false) {
             // we've found wp-cli
             $this->has_cli = true;

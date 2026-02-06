@@ -39,6 +39,14 @@ class SiteInspector {
         return "Unknown";
     }
 
+    public function isValidInstallation() : bool {
+       if ($this->application != null) {
+            return $this->application->isValidInstallation();
+        } else {
+            false;
+        }
+    }
+
     public function getDescription() : string {
         if ($this->application != null) {
             return $this->application->getDescription();

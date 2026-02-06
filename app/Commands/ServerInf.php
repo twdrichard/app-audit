@@ -59,7 +59,11 @@ class ServerInf extends Command
         //$this->info("Application info:");
         $this->inspector = new SiteInspector($this->server);
         $this->inspector->findApplicationType();
-        $this->info($this->inspector->getFormattedDescription());
+        if (!$this->inspector->isValidInstallation()) {
+			  $this->info("Sorry, I'm not recognizing a valid site here.");
+		  } else {
+			$this->info($this->inspector->getFormattedDescription());
+		}
     }
 
 	protected function findUsername() : string {

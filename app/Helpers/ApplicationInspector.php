@@ -11,6 +11,11 @@ use App\Helpers\Server;
 
 class ApplicationInspector {
     protected Server $server;
+    protected bool $is_valid;
+
+    public function __construct() {
+        $this->is_valid = false;
+    }
 
     public function isOnServer(Server $server) {
         $this->server = $server;
@@ -23,6 +28,10 @@ class ApplicationInspector {
 
     public function getDescription() {
         return "unknown" . PHP_EOL;
+    }
+
+    public function isValidInstallation() : bool {
+        return $this->is_valid;
     }
 
     /**
