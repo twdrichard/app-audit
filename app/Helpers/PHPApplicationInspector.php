@@ -46,17 +46,19 @@ class PHPApplicationInspector extends ApplicationInspector {
             return "PHP Application";
         }
     }
+
+    public function getDomain() : string {
+        return $this->findComposerLine('homepage');
+    }
+
     public function getAsciiLogoFilename() : string {
         return 'php-ascii-logo.txt';
     }
     public function getDescription() {
         $description = "";
         $description .= $this->getName() . PHP_EOL;
+        $description .= $this->getDomain() . PHP_EOL;
         $audit = $this->server->executeCommand('composer audit -d ' . $this->server->getFolder());
-        echo PHP_EOL;
-        echo "Audit:" . PHP_EOL;
-        echo $audit;
-        echo PHP_EOL;
         $description .= $audit;
 
         return $description;
