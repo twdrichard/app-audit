@@ -46,16 +46,29 @@ class WordPressApplicationInspector extends ApplicationInspector {
      **/
 
     public function getDomain() : string {
-		  $command = "option get siteurl";
+		$command = "option get siteurl";
         $command = $this->buildWPCommand($command);
         return $this->server->executeCommand($command);
+    }
+
+    /**
+     * @function getDomainAndInfo
+     * Returns a warning message too if not https by default
+     **/
+
+    public function getDomainAndInfo() : string {
+        $domain = $this->getDomain();
+        if (strpos($domain, "http://") !== false) {
+            $domain .= ' ' . $colors['red'] . '(not https)';
+        }
+        return $domain;
     }
 
     public function getDescription() {
         $colors = $this->getColors();
         $s = $colors['green'] . "Linux version: " . $this->server->findLinuxPrettyName() . PHP_EOL;
-        $s .= $colors['yellow'] . $this->getDomain() . PHP_EOL;
-        $s .= $colors['blue'] .  "WordPress site, core version " . $this->getCoreVersion();
+        $s .= $colors['yellow'] . $this->getDomainAndInfo() . PHP_EOL;
+        $s .= $colors['blue'] .  "WordPress, core version " . $this->getCoreVersion();
         if ($this->coreIsOutOfDate()) {
 			  $s .= $colors['red'] . ' (out of date)';
 			} else {
