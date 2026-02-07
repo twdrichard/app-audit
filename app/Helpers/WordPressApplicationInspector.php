@@ -65,10 +65,10 @@ class WordPressApplicationInspector extends ApplicationInspector {
         $s.= $this->getPluginsList();
         return $s;
     }
-	protected function escapeString($s) {
+/*	protected function escapeString($s) {
 		//return str_replace(' ', '\ ', $s);
 		return "'" . $s . "'";
-	}
+	}*/
     protected function buildWPCommand(string $command) : string {
         $folder = $this->server->getFolder();
         return "wp --path=$folder " . $command;
@@ -141,38 +141,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
         return "Active plugins:" . PHP_EOL . implode(PHP_EOL, $plugin_lines);
     }
 
-    public function getAsciiLogo() : string {
-       $wp_logo_filename = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'ascii-art' . DIRECTORY_SEPARATOR . 'wordpress-ascii-logo.txt';
-       $logo = file_get_contents($wp_logo_filename);
-       return $this->formatLogo($logo);
-    }
-
-    protected function formatLogo(string $logo, $remove_every_n = 2) {
-        $lines = explode(PHP_EOL, $logo);
-        $output = "";
-        $line_number = 0;
-        foreach ($lines as $line) {
-            $line_number++;
-            if ($line_number != $remove_every_n) {
-                $output .= $this->removeEveryNCharactersFromLine($line, $remove_every_n) . PHP_EOL;
-            } else {
-                $line_number = 0;
-            }
-        }
-        return $output;
-    }
-
-    protected function removeEveryNCharactersFromLine($line, $remove_every_n = 2) {
-        $output = "";
-        $char_pos = 0;
-        for ($i = 0; $i < strlen($line); $i++) {
-            $char_pos++;
-            if ($char_pos != $remove_every_n) {
-                $output .= $line[$i];
-            } else {
-                $char_pos = 0;
-            }
-        }
-        return $output;
+    public function getAsciiLogoFilename() : string {
+        return 'wordpress-ascii-logo.txt';
     }
 }

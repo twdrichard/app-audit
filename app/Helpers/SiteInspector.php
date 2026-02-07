@@ -17,6 +17,7 @@ class SiteInspector {
         $this->server = $server;
         $this->application = null;
         $this->applications = [
+            new PHPApplicationInspector(),
             new WordPressApplicationInspector()
         ];
     }

@@ -44,11 +44,29 @@ class ApplicationInspector {
     }
 
     public function getDescription() {
-        return "unknown" . PHP_EOL;
+        return "unknown";
     }
 
     public function isValidInstallation() : bool {
         return $this->is_valid;
+    }
+
+    protected function readFile(string $filename) : string {
+        $full_filename = $this->server->getFolder();
+        if ($full_filename) {
+            $lpos = strlen($full_filename) - 1;
+            if ($lpos > 0) {
+                $last_char = $full_filename[$lpos];
+                if ($last_char != DIRECTORY_SEPARATOR) {
+                    $full_filename .= DIRECTORY_SEPARATOR;
+                }
+                $full_filename .= $filename;
+                if (file_exists($full_filename)) {
+                    return file_get_contents($full_filename);
+                }
+            }
+        }
+        return '';
     }
 
     /**
@@ -73,5 +91,40 @@ class ApplicationInspector {
             'green'      => "\033[0;32m",
             'none'      => "\033[0m",
         ];
+    }
+
+    public function getAsciiLogo() : string {
+       $wp_logo_filename = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'ascii-art' . DIRECTORY_SEPARATOR . $this->getAsciiLogoFilename();
+       $logo = file_get_contents($wp_logo_filename);
+       return $this->formatLogo($logo);
+    }
+
+    protected function formatLogo(string $logo, $remove_every_n = 2) {
+        $lines = explode(PHP_EOL, $logo);
+        $output = "";
+        $line_number = 0;
+        foreach ($lines as $line) {
+            $line_number++;
+            if ($line_number != $remove_every_n) {
+                $output .= $this->removeEveryNCharactersFromLine($line, $remove_every_n) . PHP_EOL;
+            } else {
+                $line_number = 0;
+            }
+        }
+        return $output;
+    }
+
+    protected function removeEveryNCharactersFromLine($line, $remove_every_n = 2) {
+        $output = "";
+        $char_pos = 0;
+        for ($i = 0; $i < strlen($line); $i++) {
+            $char_pos++;
+            if ($char_pos != $remove_every_n) {
+                $output .= $line[$i];
+            } else {
+                $char_pos = 0;
+            }
+        }
+        return $output;
     }
 }
