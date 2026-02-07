@@ -26,6 +26,23 @@ class ApplicationInspector {
         return "unknown";
     }
 
+    public function getDomain() {
+        return "http://example.com";
+    }
+
+    /**
+     * @function getDomainAndInfo
+     * Returns a warning message too if not https by default
+     **/
+
+    public function getDomainAndInfo() : string {
+        $domain = $this->getDomain();
+        if (strpos($domain, "http://") !== false) {
+            $domain .= ' ' . $colors['red'] . '(not https)';
+        }
+        return $domain;
+    }
+
     public function getDescription() {
         return "unknown" . PHP_EOL;
     }

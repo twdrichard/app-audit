@@ -51,19 +51,6 @@ class WordPressApplicationInspector extends ApplicationInspector {
         return $this->server->executeCommand($command);
     }
 
-    /**
-     * @function getDomainAndInfo
-     * Returns a warning message too if not https by default
-     **/
-
-    public function getDomainAndInfo() : string {
-        $domain = $this->getDomain();
-        if (strpos($domain, "http://") !== false) {
-            $domain .= ' ' . $colors['red'] . '(not https)';
-        }
-        return $domain;
-    }
-
     public function getDescription() {
         $colors = $this->getColors();
         $s = $colors['green'] . "Linux version: " . $this->server->findLinuxPrettyName() . PHP_EOL;
