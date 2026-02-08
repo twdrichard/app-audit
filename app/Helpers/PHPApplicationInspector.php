@@ -59,9 +59,40 @@ class PHPApplicationInspector extends ApplicationInspector {
         $description .= $this->getName() . PHP_EOL;
         $description .= $this->getDomain() . PHP_EOL;
         $audit = $this->server->executeCommand('composer audit -d ' . $this->server->getFolder());
-        $description .= $audit;
+        $description .= $this->buildComposerAuditSummary($audit);
 
         return $description;
+    }
+
+
+    protected function buildComposerAuditSummary(string $audit) : string {
+        $audit_lines = explode(PHP_EOL, $audit);
+        $audit_items = $this->parseComposerAuditToArray($audit_lines);
+        $s = "";
+        foreach ($audit_items as $item) {
+            $s .= $item['package'] . ': ' . $item['title'] . PHP_EOL;
+        }
+        return $s;
+    }
+
+    protected function parseComposerAuditToArray(array $audit_lines) : array {
+        $ar = [];
+        $divider = "+-------------------+----------------------------------------------------------------------------------+";
+        $inside_item = false;
+        foreach ($audit_lines as $line) {
+            if (strpos($line, $divider) === 0) {
+                if (!$inside_item) {
+                    $inside_item = true;
+                    $title = '1';
+                    $package = 'x';
+                } else {
+                    $item = [ 'title' => $title, 'package' => $package ];
+                    $ar []= $item;
+                    $inside_item = false;
+                }
+            }
+        }
+        return $ar;
     }
 
     protected function findComposerLine(string $name) : string {

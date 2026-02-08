@@ -38,12 +38,13 @@ class Server {
     }
 
     public function executeLocalCommand(string $command) : string {
+            //echo "executeLocalCommand($command)" . PHP_EOL;
 		$output = [];
 		exec($command, $output, $result);
-		if ($result == 0) {
-			/*if ($output && count($output)) {
-				return reset($output);
-			}*/
+                if (count($output)) {
+		//if ($result == 0) {
+                        //echo $command . PHP_EOL;
+                        //print_r($output); echo PHP_EOL;
             return implode("\n", $output);
 		}
 		return "none.";
