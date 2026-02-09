@@ -37,6 +37,7 @@ class ApplicationInspector {
 
     public function getDomainAndInfo() : string {
         $domain = $this->getDomain();
+        $colors = $this->getColors();
         if (strpos($domain, "http://") !== false) {
             $domain .= ' ' . $colors['red'] . '(not https)';
         }
@@ -85,10 +86,11 @@ class ApplicationInspector {
     public function getColors() : array {
         return [
             'cyan'      => "\033[0;36m",
-            'yellow'    => "\033[0;33m",
+            'yellow'    => "\033[1;33m",
             'red'       => "\033[0;31m",
             'blue'      => "\033[0;34m",
             'green'      => "\033[0;32m",
+            'orange'      => "\033[0;33m",
             'none'      => "\033[0m",
         ];
     }

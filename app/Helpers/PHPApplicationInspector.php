@@ -66,11 +66,19 @@ class PHPApplicationInspector extends ApplicationInspector {
 
 
     protected function buildComposerAuditSummary(string $audit) : string {
+        $colors = $this->getColors();
         $audit_lines = explode(PHP_EOL, $audit);
         $audit_items = $this->parseComposerAuditToArray($audit_lines);
         $s = "";
         foreach ($audit_items as $item) {
-            $s .= $item['package'] . ': ' . $item['title'] . PHP_EOL;
+            $severity = '';
+            if ($item['severity'] == 'high') {
+                $severity = $colors['orange'] . 'High: ';
+            }
+            $s .= $severity . $item['package'] . ': ' . $item['title'] . PHP_EOL;
+        }
+        if ($s != "") {
+            $s= $colors['red'] . 'Security Issues' . PHP_EOL . $s;
         }
         return $s;
     }
@@ -86,10 +94,21 @@ class PHPApplicationInspector extends ApplicationInspector {
                     $title = '1';
                     $package = 'x';
                 } else {
-                    $item = [ 'title' => $title, 'package' => $package ];
+                    $item = [ 'title' => $title, 'package' => $package, 'severity' => $severity ];
                     $ar []= $item;
                     $inside_item = false;
                 }
+            }
+            $line = str_replace('|', '', $line);
+            $line = trim($line);
+            if (strpos($line, 'Title') === 0) {
+                $title = trim(str_replace('Title', '', $line));
+            }
+            if (strpos($line, 'Package') === 0) {
+                $package = trim(str_replace('Package', '', $line));
+            }
+            if (strpos($line, 'Severity') === 0) {
+                $severity = trim(str_replace('Severity', '', $line));
             }
         }
         return $ar;
