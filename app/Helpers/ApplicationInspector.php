@@ -103,7 +103,7 @@ class ApplicationInspector {
 
     protected function formatLogo(string $logo) {
         $lines = explode(PHP_EOL, $logo);
-        $remove_every_n = 2;    // nb we need this for rows
+        $remove_every_n = 20;    // nb we need this for rows
 
         $output = "";
         $line_number = 0;
@@ -112,6 +112,7 @@ class ApplicationInspector {
             if ($line_number != $remove_every_n) {
                 //$output .= $this->removeCharactersFromLine($line, $max_line_length) . PHP_EOL;
                 $output .= $this->removeEveryNCharactersFromLine($line, $remove_every_n) . PHP_EOL;
+                //$output .= $line . PHP_EOL;
             } else {
                 $line_number = 0;
             }
