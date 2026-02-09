@@ -69,13 +69,21 @@ class PHPApplicationInspector extends ApplicationInspector {
         $colors = $this->getColors();
         $audit_lines = explode(PHP_EOL, $audit);
         $audit_items = $this->parseComposerAuditToArray($audit_lines);
+        $max_line_length = 40;
         $s = "";
         foreach ($audit_items as $item) {
+            $line = "";
             $severity = '';
             if ($item['severity'] == 'high') {
-                $severity = $colors['orange'] . 'High: ';
+                $line = $colors['orange'] . 'High: ';
             }
-            $s .= $severity . $item['package'] . ': ' . $item['title'] . PHP_EOL;
+            $line .= $severity . $item['package'] . ': ' . $item['title'] . PHP_EOL;
+
+            while (strlen($line) > $max_line_length) {
+                $s .= substr($line, 0, $max_line_length) . PHP_EOL;
+                $line = "   " . substr($line, $max_line_length);
+            }
+            $s .= $line . PHP_EOL;
         }
         if ($s != "") {
             $s= $colors['red'] . 'Security Issues' . PHP_EOL . $s;

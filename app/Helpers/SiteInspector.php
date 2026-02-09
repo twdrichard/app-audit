@@ -70,18 +70,28 @@ class SiteInspector {
         }
     }
 
-    protected function combineTextSideBySide(string $text1, string $text2, string $color1, string $color2) : string {
+    protected function combineTextSideBySide(string $text1, string $text2, string $color1, string $color2, $column_width = 40) : string {
         $lines1 = explode(PHP_EOL, $this->padTextToEqualLineLength($text1));
         $lines2 = explode(PHP_EOL, $text2);
+        $column_spacer = str_pad("", $column_width);
         $line_number = 0;
         $output = "";
         foreach ($lines1 as $line_left) {
+            if (strlen($line_left) < $column_width) {
+                $line_left = $column_spacer;
+            }
             $output .= $color1 . $line_left;
             if (isset($lines2[$line_number])) {
                 $output .= $color2 . $lines2[$line_number];
             }
             $output .= PHP_EOL;
             $line_number++;
+        }
+        if (count($lines2) > count($lines1)) {
+            // right hand side still has content
+            for ($i = $line_number; $i < count($lines2); $i++) {
+                $output .= $column_spacer . $color2 . $lines2[$i] . PHP_EOL;
+            }
         }
         return $output;
     }

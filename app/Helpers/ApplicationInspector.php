@@ -101,19 +101,58 @@ class ApplicationInspector {
        return $this->formatLogo($logo);
     }
 
-    protected function formatLogo(string $logo, $remove_every_n = 2) {
+    protected function formatLogo(string $logo) {
         $lines = explode(PHP_EOL, $logo);
+        $remove_every_n = 2;    // nb we need this for rows
+
         $output = "";
         $line_number = 0;
         foreach ($lines as $line) {
             $line_number++;
             if ($line_number != $remove_every_n) {
+                //$output .= $this->removeCharactersFromLine($line, $max_line_length) . PHP_EOL;
                 $output .= $this->removeEveryNCharactersFromLine($line, $remove_every_n) . PHP_EOL;
             } else {
                 $line_number = 0;
             }
         }
         return $output;
+    }
+
+/*    protected function formatLogo(string $logo, int $max_line_length = 40) {
+        $lines = explode(PHP_EOL, $logo);
+//        $current_max_line_length = $this->findMaxLineLength($lines);
+        //echo "Logo size max is $current_max_line_length we need $max_line_length" . PHP_EOL;
+        $remove_every_n = 2;    // nb we need this for rows
+
+        $output = "";
+        $line_number = 0;
+        foreach ($lines as $line) {
+            $line_number++;
+            if ($line_number != $remove_every_n) {
+                $output .= $this->removeCharactersFromLine($line, $max_line_length) . PHP_EOL;
+                //$output .= $this->removeEveryNCharactersFromLine($line, $remove_every_n) . PHP_EOL;
+            } else {
+                $line_number = 0;
+            }
+        }
+        return $output;
+    }
+    /*protected function findMaxLineLength($lines) : int {
+        $max_length = 0;
+        foreach ($lines as $line) {
+            if (strlen($line) > $max_length) {
+                $max_length = strlen($line);
+            }
+        }
+        return $max_length;
+    }*/
+
+    protected function removeCharactersFromLine(string $line, int $max_length) {
+        while (strlen($line) > $max_length) {
+            $line = $this->removeEveryNCharactersFromLine($line, 3);
+        }
+        return $line;
     }
 
     protected function removeEveryNCharactersFromLine($line, $remove_every_n = 2) {
