@@ -29,7 +29,10 @@ class Server {
         return $this->path;
     }
 
-    public function executeCommand(string $command) : string {
+    public function executeCommand(string $command, $use_path = false) : string {
+        if ($use_path) {
+            $command = "cd " . $this->path . " && " . $command;
+        }
         if ($this->is_local) {
             return $this->executeLocalCommand($command);
         } else {
@@ -38,20 +41,15 @@ class Server {
     }
 
     public function executeLocalCommand(string $command) : string {
-            //echo "executeLocalCommand($command)" . PHP_EOL;
 		$output = [];
 		exec($command, $output, $result);
-                if (count($output)) {
-		//if ($result == 0) {
-                        //echo $command . PHP_EOL;
-                        //print_r($output); echo PHP_EOL;
+        if (count($output)) {
             return implode("\n", $output);
 		}
 		return "none.";
     }
 
     public function executeRemoteCommand(string $command) : string {
-        // nb we need to escape commands
 		$ssh_command = 'ssh ' . $this->server_name . ' "' . $command . '"';
         return $this->executeLocalCommand($ssh_command);
     }
@@ -76,7 +74,7 @@ class Server {
      * Probes the server to search for website hosting information
      **/
 
-    public function findHostingInfo() : ?array {
+/*    public function findHostingInfo() : ?array {
         $wordpress_spec = [
 			[ 'wp-config.php', 'file', '' ],
 			[ 'wp-content',	'folder', '' ],
@@ -112,7 +110,7 @@ class Server {
 			}
 		}
 		return [ $s ];
-    }
+    }*/
 
 	protected function probeServerApplication(string $application_name, array $server_spec) {
 		echo "Checking for application $application_name..." . PHP_EOL;
@@ -168,6 +166,10 @@ class Server {
 		return false;
 	}
 
+    public function fileExists($filename) {
+		$full_filename = trim($this->path) . DIRECTORY_SEPARATOR . $filename;
+        return @file_exists($full_filename);
+    }
 
 	protected function escapeString($s) {
 		return "'" . $s . "'";

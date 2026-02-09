@@ -39,12 +39,29 @@ class PHPApplicationInspector extends ApplicationInspector {
     }
 
     public function getName() : string {
+        $framework_name = $this->findFrameworkName();
         $name = $this->findComposerLine('name');
         if ($name) {
-            return 'PHP Application: ' . $name;
+            return $framework_name . ': ' . $name;
         } else {
-            return "PHP Application";
+            return $framework_name;
         }
+    }
+
+    protected function findFrameworkName() : string {
+        if ($this->server->fileExists("yii")) {
+            return "Yii2 Application";
+        }
+        if ($this->server->fileExists("artisan")) {
+            $info = $this->server->executeCommand("php artisan --version", true);
+            $laravel_identifier =  "Laravel Framework ";
+            $version_pos = strpos($info, $laravel_identifier);
+            if ($version_pos !== false) {
+                return "Laravel v" . substr($info, $version_pos + strlen($laravel_identifier));
+            }
+        }
+
+        return "PHP Application";
     }
 
     public function getDomain() : string {
