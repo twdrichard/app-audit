@@ -105,8 +105,13 @@ class WordPressApplicationInspector extends ApplicationInspector {
         if ($this->has_cli) {
             $folder = $this->server->getFolder();
             $plugin_list = $this->server->executeCommand("wp --path=$folder plugin list");
-            $formatted_list = $this->formatPluginsList($plugin_list, true);
-            $formatted_list .= $this->formatPluginsList($plugin_list, false);
+            $active_list = $this->formatPluginsList($plugin_list, true);
+            $inactive_list = $this->formatPluginsList($plugin_list, false);
+            if ($inactive_list != '') {
+                return $active_list . PHP_EOL . $inactive_list;
+            } else {
+                return $active_list;
+            }
         } else {
             return "Plugins not found." . PHP_EOL;
         }
@@ -121,6 +126,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
         } else {
             $active_status = 'inactive';
         }
+        $num_added = 0;
         $num_lines = count($lines);
         if ($lines && $num_lines > 2) {
             for ($i = 0; $i < $num_lines; $i++) {
@@ -133,6 +139,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
                             $plugin_name = $plugin_info[0];
                             $status = $plugin_info[1];
                             if ($status == $active_status) {
+                                $num_added++;
                                 $update_available = $plugin_info[2];
                                 $version = $plugin_info[3];
                                 $plugin_description = $colors['blue'];
@@ -150,7 +157,9 @@ class WordPressApplicationInspector extends ApplicationInspector {
                 }
             }
         }
-        //return $plugins_list;
+        if ($num_added == 0) {
+            return '';
+        }
         return ucfirst($active_status) . " plugins:" . PHP_EOL . implode(PHP_EOL, $plugin_lines);
     }
 
