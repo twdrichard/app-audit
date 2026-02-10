@@ -17,8 +17,8 @@ class SiteInspector {
         $this->server = $server;
         $this->application = null;
         $this->applications = [
-            new PHPApplicationInspector(),
             new WordPressApplicationInspector(),
+            new PHPApplicationInspector(),
             new JSApplicationInspector(),
         ];
     }
@@ -78,9 +78,6 @@ class SiteInspector {
         $line_number = 0;
         $output = "";
         foreach ($lines1 as $line_left) {
-            if (strlen($line_left) < $column_width) {
-                $line_left = $column_spacer;
-            }
             $output .= $color1 . $line_left;
             if (isset($lines2[$line_number])) {
                 $output .= $color2 . $lines2[$line_number];
