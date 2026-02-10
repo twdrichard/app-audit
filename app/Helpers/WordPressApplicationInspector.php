@@ -21,10 +21,11 @@ class WordPressApplicationInspector extends ApplicationInspector {
 
         // first check if we have WordPress instance here
         $info = $server->executeCommand($this->buildWPCommand("core version"));
-        if (strpos($info, "none.") !== false) {
-				$this->is_valid = false;
-				return false;
-			}
+        $command_result = $server->getLastCommandResult();
+        if ($command_result > 0 || strpos($info, "none.") !== false) {
+			$this->is_valid = false;
+			return false;
+        }
 
         $info = $server->executeCommand("wp --version");
         if (strpos($info, "WP-CLI") !== false) {
@@ -64,7 +65,6 @@ class WordPressApplicationInspector extends ApplicationInspector {
     public function getDescription() {
         $colors = $this->getColors();
         $s = $colors['green'] . "Linux version: " . $this->server->findLinuxPrettyName() . PHP_EOL;
-        //$s .= $colors['yellow'] . $this->getDomainAndInfo() . PHP_EOL;
         $s .= $colors['blue'] .  "WordPress, core version " . $this->getCoreVersion();
         if ($this->coreIsOutOfDate()) {
 			  $s .= $colors['red'] . ' (out of date)';

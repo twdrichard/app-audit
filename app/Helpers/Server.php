@@ -10,9 +10,11 @@ namespace App\Helpers;
 class Server {
     protected string $server_name, $path;
     protected bool $is_local;
+    protected int $last_command_result;
 
     public function __construct(string $server_name, string $path) {
         $this->server_name = $server_name;
+        $this->last_command_result = 0;
         $this->is_local = ($server_name == "local");
         if ($path) {
             $this->path = $path;
@@ -29,10 +31,15 @@ class Server {
         return $this->path;
     }
 
+    public function getLastCommandResult() : int {
+        return $this->last_command_result;
+    }
+
     public function executeCommand(string $command, $use_path = false) : string {
         if ($use_path) {
             $command = "cd " . $this->path . " && " . $command;
         }
+        $command .= " 2>&1";    // suppress error output
         if ($this->is_local) {
             return $this->executeLocalCommand($command);
         } else {
@@ -43,6 +50,7 @@ class Server {
     public function executeLocalCommand(string $command) : string {
 		$output = [];
 		exec($command, $output, $result);
+        $this->last_command_result = $result;
         if (count($output)) {
             return implode("\n", $output);
 		}
