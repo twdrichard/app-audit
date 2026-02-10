@@ -77,6 +77,17 @@ class SiteInspector {
         $column_spacer = str_pad("", $column_width);
         $line_number = 0;
         $output = "";
+        if (count($lines2) < count($lines1)) {
+            // we have less lines on the right, so lets add some empty lines to center vertically
+            $num_padding_lines = (count($lines1) - count($lines2)) / 2;
+            $num_padding_lines --;
+            if ($num_padding_lines > 0) {
+                $blank_line = " ";
+                for ($i = 0; $i < $num_padding_lines; $i++) {
+                    array_unshift($lines2, $blank_line);
+                }
+            }
+        }
         foreach ($lines1 as $line_left) {
             $output .= $color1 . $line_left;
             if (isset($lines2[$line_number])) {
