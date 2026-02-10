@@ -12,10 +12,12 @@ use App\Helpers\ApplicationInspector;
 
 class WordPressApplicationInspector extends ApplicationInspector {
     protected bool $has_cli;
+    protected string $url;
 
     public function isOnServer(Server $server) {    // nb check for wp-config file not wp cli?
         $this->has_cli = false;
         $this->server = $server;
+        $this->url = '';
 
         // first check if we have WordPress instance here
         $info = $server->executeCommand($this->buildWPCommand("core version"));
@@ -38,6 +40,11 @@ class WordPressApplicationInspector extends ApplicationInspector {
         return "WordPress";
     }
 
+    public function getTitle() : string {
+        $colors = $this->getColors();
+        return "WordPress audit on " . date('j M Y') . PHP_EOL . $colors['yellow'] . $this->getDomain();
+    }
+
     /**
      * @function getDomain
      * Use wp "db query" command to look up the siteurl
@@ -46,15 +53,18 @@ class WordPressApplicationInspector extends ApplicationInspector {
      **/
 
     public function getDomain() : string {
-		$command = "option get siteurl";
-        $command = $this->buildWPCommand($command);
-        return $this->server->executeCommand($command);
+        if ($this->url == '') {
+            $command = "option get siteurl";
+            $command = $this->buildWPCommand($command);
+            $this->url = $this->server->executeCommand($command);
+        }
+        return $this->url;
     }
 
     public function getDescription() {
         $colors = $this->getColors();
         $s = $colors['green'] . "Linux version: " . $this->server->findLinuxPrettyName() . PHP_EOL;
-        $s .= $colors['yellow'] . $this->getDomainAndInfo() . PHP_EOL;
+        //$s .= $colors['yellow'] . $this->getDomainAndInfo() . PHP_EOL;
         $s .= $colors['blue'] .  "WordPress, core version " . $this->getCoreVersion();
         if ($this->coreIsOutOfDate()) {
 			  $s .= $colors['red'] . ' (out of date)';

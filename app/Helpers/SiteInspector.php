@@ -64,7 +64,8 @@ class SiteInspector {
         if ($this->application != null) {
             $logo = $this->getAsciiLogo();
             $colors = $this->application->getColors();
-            $description = $this->application->getDescription();
+            $title = $this->application->getTitle();
+            $description = $title . PHP_EOL . PHP_EOL . $this->application->getDescription();
             return $this->combineTextSideBySide($logo, $description, $colors['yellow'], $colors['cyan']);
         } else {
             return "No application found." . PHP_EOL;
