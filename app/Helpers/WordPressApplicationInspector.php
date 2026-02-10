@@ -75,10 +75,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
         $s.= $this->getPluginsList();
         return $s;
     }
-/*	protected function escapeString($s) {
-		//return str_replace(' ', '\ ', $s);
-		return "'" . $s . "'";
-	}*/
+
     protected function buildWPCommand(string $command) : string {
         $folder = $this->server->getFolder();
         return "wp --path=$folder " . $command;
@@ -108,16 +105,22 @@ class WordPressApplicationInspector extends ApplicationInspector {
         if ($this->has_cli) {
             $folder = $this->server->getFolder();
             $plugin_list = $this->server->executeCommand("wp --path=$folder plugin list");
-            return $this->formatPluginsList($plugin_list);
+            $formatted_list = $this->formatPluginsList($plugin_list, true);
+            $formatted_list .= $this->formatPluginsList($plugin_list, false);
         } else {
             return "Plugins not found." . PHP_EOL;
         }
     }
 
-    protected function formatPluginsList(string $plugins_list) {
+    protected function formatPluginsList(string $plugins_list, $active_only = true) {
         $lines = explode(PHP_EOL, $plugins_list);
         $colors = $this->getColors();
         $plugin_lines = [];
+        if ($active_only) {
+            $active_status = 'active';
+        } else {
+            $active_status = 'inactive';
+        }
         $num_lines = count($lines);
         if ($lines && $num_lines > 2) {
             for ($i = 0; $i < $num_lines; $i++) {
@@ -129,7 +132,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
                         if ($plugin_info && count($plugin_info) > 3) {
                             $plugin_name = $plugin_info[0];
                             $status = $plugin_info[1];
-                            if ($status == 'active') {
+                            if ($status == $active_status) {
                                 $update_available = $plugin_info[2];
                                 $version = $plugin_info[3];
                                 $plugin_description = $colors['blue'];
@@ -148,7 +151,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
             }
         }
         //return $plugins_list;
-        return "Active plugins:" . PHP_EOL . implode(PHP_EOL, $plugin_lines);
+        return ucfirst($active_status) . " plugins:" . PHP_EOL . implode(PHP_EOL, $plugin_lines);
     }
 
     public function getAsciiLogoFilename() : string {
