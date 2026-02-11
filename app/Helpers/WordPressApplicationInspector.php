@@ -59,7 +59,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
             $command = $this->buildWPCommand($command);
             $this->url = $this->server->executeCommand($command);
         }
-        return $this->url;
+        return $this->formatUrlForDisplay($this->url);
     }
 
     public function getDescription() {

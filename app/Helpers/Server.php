@@ -74,7 +74,8 @@ class Server {
     public function findLinuxPrettyName() : string {
         $command = "cat /etc/*release | grep PRETTY_NAME=";
         $output = $this->executeCommand($command);
-        return str_replace('PRETTY_NAME=', '', $output);
+        $output = str_replace('PRETTY_NAME=', '', $output);
+        return str_replace('"', '', $output);
     }
 
     /**

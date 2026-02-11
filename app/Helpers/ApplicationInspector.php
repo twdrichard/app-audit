@@ -75,6 +75,20 @@ class ApplicationInspector {
     }
 
     /**
+     * @function formatUrlForDisplay
+     * Adds a warning if this is an http url not https
+     **/
+
+    public function formatUrlForDisplay(string $url) : string {
+        if (strpos($url, 'http:') === 0) {
+            $colors = $this->getColors();
+            return $url . $colors['red'] . ' (should be https)';
+        } else {
+            return $url;
+        }
+    }
+
+    /**
      *  Ansi color codes for linux terminal from
      * https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
      *  Black        0;30     Dark Gray     1;30

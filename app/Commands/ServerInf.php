@@ -36,26 +36,6 @@ class ServerInf extends Command
         $path = $this->argument('path');
 
         $this->server = new Server($server_name, $path);
-        //$this->info("Hello, " . $this->findUsername());
-
-        /*$basic_server_info = [
-            'hostname'      => "hostname",
-            'PHP version'   => "php --version",
-            //'OS version'    => "uname -svrm",
-           // 'is Linux'      => "if \"true\" == ',('; then echo Linux; fi;true \) else echo Windows",
-        ];
-        foreach ($basic_server_info as $info_name => $command) {
-            $value = $this->server->executeCommand($command);
-            $this->info($info_name . ": " . $value);
-        }*/
-
-        /*$linux_version = $this->server->findLinuxPrettyName();
-        if ($linux_version) {
-            $this->info("Linux version: " . $linux_version);
-        }*/
-
-        //$this->info("");
-
         $this->inspector = new SiteInspector($this->server);
         if (!$this->inspector->findApplicationType()) {
 			  echo "No application type found." . PHP_EOL;
