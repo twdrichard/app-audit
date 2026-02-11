@@ -15,14 +15,19 @@ class ServerInf extends Command
      *
      * @var string
      */
-    protected $signature = 'serverinf {server} {path=httpdocs}';
+    //protected $signature = 'audit {server} {identity=none} {--username=none} {path=httpdocs}';
+    protected $signature = 'audit
+        {server : The server SSH alias.}
+        {identity? : SSH identity key}
+        {username? : server username}
+        {path=httpdocs : The application file path}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Show server information';
+    protected $description = 'Audit an application on a server.';
 
     protected Server $server;
     protected SiteInspector $inspector;
@@ -34,6 +39,8 @@ class ServerInf extends Command
     {
         $server_name = $this->argument('server');
         $path = $this->argument('path');
+        $username = $this->argument('username');
+        $identity = $this->argument('identity');
 
         $this->server = new Server($server_name, $path);
         $this->inspector = new SiteInspector($this->server);

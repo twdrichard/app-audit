@@ -73,37 +73,56 @@ class SiteInspector {
     }
 
     protected function combineTextSideBySide(string $text1, string $text2, string $color1, string $color2, $column_width = 40) : string {
-        $lines1 = explode(PHP_EOL, $this->padTextToEqualLineLength($text1));
-        $lines2 = explode(PHP_EOL, $text2);
+        $left_lines = explode(PHP_EOL, $this->padTextToEqualLineLength($text1));
+        $right_lines = explode(PHP_EOL, $text2);
+        $num_right_lines = count($right_lines);
+        $num_left_lines = count($left_lines);
+        //echo "Displaying " . count($left_lines) . ", " . count($right_lines) . " lines" . PHP_EOL;
         $column_spacer = str_pad("", $column_width);
-        $line_number = 0;
         $output = "";
-        if (count($lines2) < count($lines1)) {
+        if ($num_right_lines < $num_left_lines) {
             // we have less lines on the right, so lets add some empty lines to center vertically
-            $num_padding_lines = (count($lines1) - count($lines2)) / 2;
-            $num_padding_lines --;
-            if ($num_padding_lines > 0) {
-                $blank_line = " ";
-                for ($i = 0; $i < $num_padding_lines; $i++) {
-                    array_unshift($lines2, $blank_line);
-                }
-            }
+            $num_padding_lines = ($num_left_lines - $num_right_lines) / 2;
+            $right_lines = $this->padArrayWithBlankLines($right_lines, $num_padding_lines - 1, $column_width, $num_left_lines);
+            $num_right_lines = $num_left_lines;
         }
-        foreach ($lines1 as $line_left) {
+        // now check if column1 is too long
+        if ($num_left_lines < $num_right_lines) {
+            // we have less lines on the right, so lets add some empty lines to center vertically
+            $num_padding_lines = ($num_right_lines - $num_left_lines) / 2;
+            $left_lines = $this->padArrayWithBlankLines($left_lines, $num_padding_lines, $column_width, $num_right_lines);
+            $num_left_lines = $num_right_lines;
+        }
+
+        $line_number = 0;
+        foreach ($left_lines as $line_left) {
             $output .= $color1 . $line_left;
-            if (isset($lines2[$line_number])) {
-                $output .= $color2 . $lines2[$line_number];
+            if (isset($right_lines[$line_number])) {
+                $output .= $color2 . $right_lines[$line_number];
             }
             $output .= PHP_EOL;
             $line_number++;
         }
-        if (count($lines2) > count($lines1)) {
-            // right hand side still has content
-            for ($i = $line_number; $i < count($lines2); $i++) {
-                $output .= $column_spacer . $color2 . $lines2[$i] . PHP_EOL;
+        if (count($right_lines) > count($left_lines)) {
+            for ($i = $line_number; $i < count($right_lines); $i++) {
+                $output .= $column_spacer . $color2 . $right_lines[$i] . PHP_EOL;
             }
         }
         return $output;
+    }
+
+    protected function padArrayWithBlankLines($ar, $num_padding_lines, $column_width, $total_lines) {
+        if ($num_padding_lines > 0) {
+            //echo "Adding $num_padding_lines padding lines to column" . PHP_EOL;
+            $blank_line = str_pad('', $column_width);
+            for ($i = 0; $i < $num_padding_lines; $i++) {
+                array_unshift($ar, $blank_line);
+            }
+            while (count($ar) < $total_lines) {
+                $ar []= $blank_line;
+            }
+        }
+        return $ar;
     }
 
     protected function padTextToEqualLineLength($text, $num_spaces_to_add = 3) : string {
