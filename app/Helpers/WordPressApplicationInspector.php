@@ -20,7 +20,6 @@ class WordPressApplicationInspector extends ApplicationInspector {
         $this->url = '';
 
         if (!$this->server->fileExists('wp-config.php')) {
-            echo "WP config not found, this isn't a WordPress site." . PHP_EOL;
             return false;
         }
 
@@ -139,7 +138,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
                     if ($setting_name == 'WP_DEBUG_LOG') {
                         $wp_debug_log = ($value == 'true');
                     }
-                    echo 'Found setting "' . $setting_name . '" value "' . $value . '"' . PHP_EOL;
+                    //echo 'Found setting "' . $setting_name . '" value "' . $value . '"' . PHP_EOL;
                 }
                 //echo "debug: $debug_setting" . PHP_EOL;
             }
