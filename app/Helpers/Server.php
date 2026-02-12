@@ -177,7 +177,9 @@ class Server {
 
     public function fileExists($filename) {
 		$full_filename = trim($this->path) . DIRECTORY_SEPARATOR . $filename;
-        return @file_exists($full_filename);
+        $command = "test -f $full_filename";
+        $result = $this->executeCommand($command);
+        return $result;
     }
 
 	protected function escapeString($s) {
