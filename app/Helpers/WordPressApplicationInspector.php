@@ -19,6 +19,11 @@ class WordPressApplicationInspector extends ApplicationInspector {
         $this->server = $server;
         $this->url = '';
 
+        if (!$this->server->fileExists('wp-config.php')) {
+            echo "WP config not found, this isn't a WordPress site." . PHP_EOL;
+            return false;
+        }
+
         // first check if we have WordPress instance here
         $info = $server->executeCommand($this->buildWPCommand("core version"));
         $command_result = $server->getLastCommandResult();
