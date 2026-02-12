@@ -52,6 +52,19 @@ class ApplicationInspector {
         return "Application Audit";
     }
 
+    /**
+     * @function hasLogs
+     * @return bool true if this application has logs that can be shown
+     **/
+
+    public function hasLogs() : bool {
+        return false;
+    }
+
+    public function getLogLines() : array {
+        return [];
+    }
+
     public function isValidInstallation() : bool {
         return $this->is_valid;
     }

@@ -66,10 +66,25 @@ class SiteInspector {
             $colors = $this->application->getColors();
             $title = $this->application->getTitle();
             $description = $title . PHP_EOL . PHP_EOL . $this->application->getDescription();
+            $description .= $this->getLogsSummary();
             return $this->combineTextSideBySide($logo, $description, $colors['yellow'], $colors['cyan']);
         } else {
             return "No application found." . PHP_EOL;
         }
+    }
+
+    protected function getLogsSummary() : string {
+        $colors = $this->application->getColors();
+        $s = PHP_EOL . PHP_EOL . $colors['orange'] . 'Logs' . PHP_EOL;
+        if ($this->application->hasLogs()) {
+            $log_entries = $this->application->getLogLines();
+            foreach ($log_entries as $line) {
+                $s .= $line . PHP_EOL;
+            }
+        } else {
+            $s .= "No log files found." . PHP_EOL;
+        }
+        return $s;
     }
 
     protected function combineTextSideBySide(string $text1, string $text2, string $color1, string $color2, $column_width = 40) : string {

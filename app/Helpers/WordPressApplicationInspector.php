@@ -100,11 +100,73 @@ class WordPressApplicationInspector extends ApplicationInspector {
             $command = $this->buildWPCommand("core check-update");
             $response = $this->server->executeCommand($command);
             if (strpos($response, "Success: WordPress is at the latest version.") !== false) {
-					return false;		// ok we're already at the latest version
-				}
+				return false;		// ok we're already at the latest version
 			}
-			return true;
-     	 }
+        }
+		return true;
+    }
+
+    public function hasLogs() : bool {
+        return $this->hasDebugLog();
+    }
+
+    /**
+     * @function hasDebugLog
+     * @return bool if wp is in debug mode and debug log file is available
+     * @link https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/
+     **/
+
+    protected function hasDebugLog() : bool {
+        $config_filename = $this->server->getFolder() . DIRECTORY_SEPARATOR . "wp-config.php";
+        $command = "grep DEBUG $config_filename";
+        $debug_info = $this->server->executeCommand($command);
+        $debug_settings = explode(PHP_EOL, $debug_info);
+        if ($debug_settings) {
+            $wp_debug = false;
+            $wp_debug_log = false;
+            foreach ($debug_settings as $debug_setting) {
+                $debug_setting = str_replace('define(', '', $debug_setting);
+                $debug_setting = str_replace("'", '', $debug_setting);
+                $debug_setting = str_replace(";", '', $debug_setting);
+                $debug_setting = trim(str_replace(')', '', $debug_setting));
+                $setting_ar = explode(',', $debug_setting);
+                if ($setting_ar && count($setting_ar) > 1) {
+                    $setting_name = trim($setting_ar[0]);
+                    $value = strtolower(trim($setting_ar[1]));
+                    if ($setting_name == 'WP_DEBUG') {
+                        $wp_debug = ($value == 'true');
+                    }
+                    if ($setting_name == 'WP_DEBUG_LOG') {
+                        $wp_debug_log = ($value == 'true');
+                    }
+                    echo 'Found setting "' . $setting_name . '" value "' . $value . '"' . PHP_EOL;
+                }
+                //echo "debug: $debug_setting" . PHP_EOL;
+            }
+        }
+        if ($wp_debug_log && $wp_debug) {
+            return true;
+        }
+        return false;
+    }
+
+    protected function findDebugLogFilename() : string {
+        $debug_filename = $this->server->getFolder() . DIRECTORY_SEPARATOR .  "wp-content" . DIRECTORY_SEPARATOR . "debug.log";
+        return $debug_filename;
+    }
+
+    public function getLogLines() : array {
+        $log_filename = $this->findDebugLogFilename();
+        if ($log_filename) {
+            $command = "tail -10 $log_filename";
+            $output = $this->server->executeCommand($command);
+            if ($output) {
+                $ar = explode(PHP_EOL, $output);
+                return $ar;
+            }
+        }
+        return [];
+    }
 
     protected function getPluginsList() : string {
         if ($this->has_cli) {
