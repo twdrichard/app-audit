@@ -155,4 +155,27 @@ class PHPApplicationInspector extends ApplicationInspector {
         }
         return '';
     }
+    public function hasLogs() : bool {
+        return $this->server->fileExists($this->findDebugLogFilename());
+    }
+
+    protected function findDebugLogFilename() : string {
+        // Yii2
+        $debug_filename = $this->server->getFolder() . DIRECTORY_SEPARATOR .  "runtime" . DIRECTORY_SEPARATOR . "logs" . DIRECTORY_SEPARATOR . "app.log";
+        return $debug_filename;
+    }
+
+    public function getLogLines() : array {
+        $log_filename = $this->findDebugLogFilename();
+        if ($log_filename) {
+            $command = "tail -10 $log_filename";
+            $output = $this->server->executeCommand($command);
+            if ($output) {
+                $ar = explode(PHP_EOL, $output);
+                return $ar;
+            }
+        }
+        return [];
+    }
+
 }
