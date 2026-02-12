@@ -66,8 +66,9 @@ class SiteInspector {
             $colors = $this->application->getColors();
             $title = $this->application->getTitle();
             $description = $title . PHP_EOL . PHP_EOL . $this->application->getDescription();
-            $description .= $this->getLogsSummary();
-            return $this->combineTextSideBySide($logo, $description, $colors['yellow'], $colors['cyan']);
+            $formatted_description = $this->combineTextSideBySide($logo, $description, $colors['yellow'], $colors['cyan']);
+            $formatted_description .= $this->getLogsSummary();
+            return $formatted_description;
         } else {
             return "No application found." . PHP_EOL;
         }
@@ -75,15 +76,40 @@ class SiteInspector {
 
     protected function getLogsSummary() : string {
         $colors = $this->application->getColors();
-        $s = PHP_EOL . PHP_EOL . $colors['orange'] . 'Logs' . PHP_EOL;
+        $s = $colors['orange'] . 'Logs' . PHP_EOL .  $colors['blue'];
         if ($this->application->hasLogs()) {
             $log_entries = $this->application->getLogLines();
             foreach ($log_entries as $line) {
-                $s .= $line . PHP_EOL;
+                $s .= $this->formatDisplayLine($line);
             }
         } else {
             $s .= "No log files found." . PHP_EOL;
         }
+        return $s;
+    }
+
+    protected function formatDisplayLine(string $line, int $width = 80) : string {
+        $s = "";
+        $indent_required = false;
+        $loop_no = 0;
+        do {
+
+            if ($indent_required) {
+                $s .= '   ';
+                $line_width = $width - 3;
+            } else {
+                $indent_required = true;
+                $line_width = $width;
+            }
+
+            if (strlen($line) > $line_width) {
+                $s .= substr($line, 0, $line_width) . PHP_EOL;
+                $line = substr($line, $line_width);
+            } else {
+                $s .= $line . PHP_EOL;
+                $line = '';
+            }
+        } while (strlen($line) > 0 && $loop_no++ < 10);
         return $s;
     }
 
