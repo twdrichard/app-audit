@@ -42,7 +42,7 @@ class PHPApplicationInspector extends ApplicationInspector {
         $framework_name = $this->findFrameworkName();
         $name = $this->findComposerLine('name');
         if ($name) {
-            return $framework_name . ': ' . $name;
+            return $framework_name . PHP_EOL . 'Name : ' . $name;
         } else {
             return $framework_name;
         }
@@ -58,7 +58,8 @@ class PHPApplicationInspector extends ApplicationInspector {
             $laravel_identifier =  "Laravel Framework ";
             $version_pos = strpos($info, $laravel_identifier);
             if ($version_pos !== false) {
-                return "Laravel v" . substr($info, $version_pos + strlen($laravel_identifier));
+                $framework = "Laravel v" . substr($info, $version_pos + strlen($laravel_identifier));
+                return str_replace(PHP_EOL, '', $framework);
             }
         }
 
@@ -73,8 +74,7 @@ class PHPApplicationInspector extends ApplicationInspector {
         return 'php-ascii-logo.txt';
     }
     public function getDescription() {
-        $description = "";
-        $description .= $this->getName() . PHP_EOL;
+        $description = $this->getName() . PHP_EOL;
         $description .= $this->getDomain() . PHP_EOL;
         $audit = $this->server->executeCommand('composer audit', true);
         $description .= $this->buildComposerAuditSummary($audit);
