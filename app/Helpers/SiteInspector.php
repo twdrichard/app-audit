@@ -82,7 +82,6 @@ class SiteInspector {
     }
 
     protected function getLogsSummary() : string {
-        return ""; //
         $colors = $this->application->getColors();
         $s = $colors['orange'] . 'Logs' . PHP_EOL .  $colors['blue'];
         if ($this->application->hasLogs()) {
@@ -94,6 +93,27 @@ class SiteInspector {
             $s .= "No log files found." . PHP_EOL;
         }
         return $s;
+    }
+
+    /**
+     * @function formatColumnLines
+     * Breaks up lines longer than the allowed width
+     **/
+
+    protected function formatColumnLinesToWidth(array $lines, int $max_width) : array {
+        $ar = [];
+        foreach ($lines as $line) {
+            $display_line = $this->formatDisplayLine($line, $max_width);
+            if (strpos($display_line, PHP_EOL) !== false) {
+                $display_ar = explode(PHP_EOL, $display_line);
+                foreach ($display_ar as $line) {
+                    $ar []= $line;
+                }
+            } else {
+                $ar []= $display_line;
+            }
+        }
+        return $ar;
     }
 
     protected function formatDisplayLine(string $line, int $width = 80) : string {
@@ -123,6 +143,8 @@ class SiteInspector {
     protected function combineTextSideBySide(string $text1, string $text2, string $color1, string $color2, int $column_width = 40) : string {
         $left_lines = explode(PHP_EOL, $this->padTextToEqualLineLength($text1, $column_width));
         $right_lines = explode(PHP_EOL, $text2);
+        $right_lines = $this->formatColumnLinesToWidth($right_lines, $column_width);
+
         $num_right_lines = count($right_lines);
         $num_left_lines = count($left_lines);
         //echo "Displaying " . count($left_lines) . ", " . count($right_lines) . " lines" . PHP_EOL;
@@ -149,6 +171,11 @@ class SiteInspector {
             }
             $output .= $color1 . $line_left;
             if (isset($right_lines[$line_number])) {
+                /*$right_line = $right_lines[$line_number];
+                if (strlen($right_line) > $column_width) {
+                    $right_line = substr($right_line, 0, $column_width);
+                }
+                $output .= $color2 . $right_line;*/
                 $output .= $color2 . $right_lines[$line_number];
             }
             $output .= PHP_EOL;
