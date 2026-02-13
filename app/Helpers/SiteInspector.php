@@ -68,7 +68,7 @@ class SiteInspector {
             $colors = $this->application->getColors();
             $title = $this->application->getTitle();
             $description = $title . PHP_EOL . PHP_EOL . $this->application->getDescription();
-            $column_width = $this->line_width / 2;
+            $column_width = (int)($this->line_width / 2);
             if ($column_width < 10 || $column_width > 1000) {
                 echo "Setting column width to 40 from $column_width" . PHP_EOL;
                 $column_width = 40;     // give a sensible value if all else fails
@@ -120,7 +120,7 @@ class SiteInspector {
         return $s;
     }
 
-    protected function combineTextSideBySide(string $text1, string $text2, string $color1, string $color2, $column_width = 40) : string {
+    protected function combineTextSideBySide(string $text1, string $text2, string $color1, string $color2, int $column_width = 40) : string {
         $left_lines = explode(PHP_EOL, $this->padTextToEqualLineLength($text1, $column_width));
         $right_lines = explode(PHP_EOL, $text2);
         $num_right_lines = count($right_lines);
@@ -131,7 +131,7 @@ class SiteInspector {
         if ($num_right_lines < $num_left_lines) {
             // we have less lines on the right, so lets add some empty lines to center vertically
             $num_padding_lines = ($num_left_lines - $num_right_lines) / 2;
-            $right_lines = $this->padArrayWithBlankLines($right_lines, $num_padding_lines - 1, $column_width, $num_left_lines);
+            $right_lines = $this->padArrayWithBlankLines($right_lines, $num_padding_lines, $column_width, $num_left_lines);
             $num_right_lines = $num_left_lines;
         }
         // now check if column1 is too long
@@ -140,10 +140,19 @@ class SiteInspector {
             $num_padding_lines = ($num_right_lines - $num_left_lines) / 2;
             $left_lines = $this->padArrayWithBlankLines($left_lines, $num_padding_lines, $column_width, $num_right_lines);
             $num_left_lines = $num_right_lines;
+            if (count($left_lines) != count($right_lines)) {
+                echo "After column padding we have " . count($left_lines) . " left and " . count($right_lines) . " right lines." . PHP_EOL;
+            }
         }
 
         $line_number = 0;
         foreach ($left_lines as $line_left) {
+            if ($line_left == "") {
+                $line_left = str_pad($line_left, $column_width);
+            }
+            /*if (strlen($line_left) < $column_width) {
+                echo "Left line #$line_number is " . strlen($line_left) . " and should be $column_width chars." . PHP_EOL;
+            }*/
             $output .= $color1 . $line_left;
             if (isset($right_lines[$line_number])) {
                 $output .= $color2 . $right_lines[$line_number];
