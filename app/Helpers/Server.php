@@ -78,49 +78,6 @@ class Server {
         return str_replace('"', '', $output);
     }
 
-    /**
-     * findHostingInfo
-     * Probes the server to search for website hosting information
-     **/
-
-/*    public function findHostingInfo() : ?array {
-        $wordpress_spec = [
-			[ 'wp-config.php', 'file', '' ],
-			[ 'wp-content',	'folder', '' ],
-		];
-		$yii2_spec = [
-			[ 'db-local.php', 'file', 'config' ],
-		];
-
-		$server_specs = [
-			'WordPress' => $wordpress_spec,
-			'Yii2'		=> $yii2_spec,
-		];
-		$s = '';
-		$found_application_name = '';
-		foreach ($server_specs as $application_name => $server_spec) {
-			$application_found = $this->probeServerApplication($application_name, $server_spec);
-			if ($application_found) {
-				$s .= "Found application $application_name." . PHP_EOL;
-				$found_application_name = $application_name;
-			}
-		}
-		echo $s;
-
-		if ($found_application_name == 'WordPress') {
-			// check the db
-			$config = $this->getWordPressConfig();
-			if ($config) {
-				echo "Yay, found config...." . PHP_EOL;
-				//echo $config;
-				$this->probeWordPressDatabase($config);
-			} else {
-				echo "...but no config found." . PHP_EOL;
-			}
-		}
-		return [ $s ];
-    }*/
-
 	protected function probeServerApplication(string $application_name, array $server_spec) {
 		echo "Checking for application $application_name..." . PHP_EOL;
 		$ok = false;

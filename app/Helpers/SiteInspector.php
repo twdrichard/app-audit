@@ -12,10 +12,12 @@ class SiteInspector {
     protected Server $server;
     protected array $applications;
     protected $application;
+    protected int $line_width;
 
     public function __construct(Server $server) {
         $this->server = $server;
         $this->application = null;
+        $this->line_width = $this->findTerminalWidth();
         $this->applications = [
             new WordPressApplicationInspector(),
             new PHPApplicationInspector(),
@@ -66,7 +68,12 @@ class SiteInspector {
             $colors = $this->application->getColors();
             $title = $this->application->getTitle();
             $description = $title . PHP_EOL . PHP_EOL . $this->application->getDescription();
-            $formatted_description = $this->combineTextSideBySide($logo, $description, $colors['yellow'], $colors['cyan']);
+            $column_width = $this->line_width / 2;
+            if ($column_width < 10 || $column_width > 1000) {
+                echo "Setting column width to 40 from $column_width" . PHP_EOL;
+                $column_width = 40;     // give a sensible value if all else fails
+            }
+            $formatted_description = $this->combineTextSideBySide($logo, $description, $colors['yellow'], $colors['cyan'], $column_width);
             $formatted_description .= $this->getLogsSummary();
             return $formatted_description;
         } else {
@@ -80,7 +87,7 @@ class SiteInspector {
         if ($this->application->hasLogs()) {
             $log_entries = $this->application->getLogLines();
             foreach ($log_entries as $line) {
-                $s .= $this->formatDisplayLine($line);
+                $s .= $this->formatDisplayLine($line, $this->line_width);
             }
         } else {
             $s .= "No log files found." . PHP_EOL;
@@ -204,5 +211,25 @@ class SiteInspector {
         } else {
             return "";
         }
+    }
+
+    /**
+     * @function findTerminalWidth
+     * @return int the local terminal line width, usually 80 characters
+     **/
+
+    protected function findTerminalWidth() : int {
+        $command = "stty size";
+        $info = $this->server->executeLocalCommand($command);
+        if ($info) {
+            $terminal_size = explode(' ', $info);
+            if ($terminal_size && count($terminal_size) > 1) {
+                $width = (int)$terminal_size[1];
+                if ($width > 10 && $width < 1000) {
+                    return $width;
+                }
+            }
+        }
+        return 80;
     }
 }
