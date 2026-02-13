@@ -13,10 +13,12 @@ use App\Helpers\ApplicationInspector;
 class PHPApplicationInspector extends ApplicationInspector {
     protected bool $has_composer_json;
     protected array $composer_ar;
+    protected string $framework_name;
 
     public function __construct() {
         parent::__construct();
         $this->composer_ar = [];
+        $this->framework_name = "";
     }
 
     public function isOnServer(Server $server) {
@@ -49,8 +51,13 @@ class PHPApplicationInspector extends ApplicationInspector {
     }
 
     protected function findFrameworkName() : string {
+        if ($this->framework_name)  {
+            return $this->framework_name;
+        }
+
         if ($this->server->fileExists("yii")) {
-            return "Yii2 Application";
+            $this->framework_name = "Yii2 Application";
+            return $this->framework_name;
         }
         if ($this->server->fileExists("artisan")) {
             $info = $this->server->executeCommand("php artisan --version", true);
@@ -59,11 +66,13 @@ class PHPApplicationInspector extends ApplicationInspector {
             $version_pos = strpos($info, $laravel_identifier);
             if ($version_pos !== false) {
                 $framework = "Laravel v" . substr($info, $version_pos + strlen($laravel_identifier));
-                return str_replace(PHP_EOL, '', $framework);
+                $this->framework_name = str_replace(PHP_EOL, '', $framework);
+                return $this->framework_name;
             }
         }
 
-        return "PHP Application";
+        $this->framework_name = "PHP Application";
+        return $this->framework_name;
     }
 
     public function getDomain() : string {
@@ -71,6 +80,10 @@ class PHPApplicationInspector extends ApplicationInspector {
     }
 
     public function getAsciiLogoFilename() : string {
+        $framework = $this->findFrameworkName();
+        if (strpos($framework, "Laravel") === 0) {
+            return 'laravel-ascii-logo.txt';
+        }
         return 'php-ascii-logo.txt';
     }
     public function getDescription() {
