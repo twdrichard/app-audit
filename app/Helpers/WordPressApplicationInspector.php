@@ -63,7 +63,31 @@ class WordPressApplicationInspector extends ApplicationInspector {
             $command = $this->buildWPCommand($command);
             $this->url = $this->server->executeCommand($command);
         }
+        $this->url = $this->removePHPErrors($this->url);
         return $this->formatUrlForDisplay($this->url);
+    }
+
+    protected function removePHPErrors(string $s) : string {
+        $output = "";
+        $ar = explode(PHP_EOL, $s);
+        if ($ar) {
+            foreach ($ar as $line) {
+                if (!$this->isPHPError($line)) {
+                    $output .= $line . PHP_EOL;
+                }
+            }
+        }
+        return $output;
+    }
+
+    protected function isPHPError(string $line) : bool {
+        $error_notices = [ "Notice: ", "Error: ", "Warning: " ];
+        foreach ($error_notices as $error_notice) {
+            if (strpos($line, $error_notice) === 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function getDescription() {
@@ -138,9 +162,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
                     if ($setting_name == 'WP_DEBUG_LOG') {
                         $wp_debug_log = ($value == 'true');
                     }
-                    //echo 'Found setting "' . $setting_name . '" value "' . $value . '"' . PHP_EOL;
                 }
-                //echo "debug: $debug_setting" . PHP_EOL;
             }
         }
         if ($wp_debug_log && $wp_debug) {

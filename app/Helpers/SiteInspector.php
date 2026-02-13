@@ -70,11 +70,11 @@ class SiteInspector {
             $description = $title . PHP_EOL . PHP_EOL . $this->application->getDescription();
             $column_width = (int)($this->line_width / 2);
             if ($column_width < 10 || $column_width > 1000) {
-                echo "Setting column width to 40 from $column_width" . PHP_EOL;
+                //echo "Setting column width to 40 from $column_width" . PHP_EOL;
                 $column_width = 40;     // give a sensible value if all else fails
             }
             $formatted_description = $this->combineTextSideBySide($logo, $description, $colors['yellow'], $colors['cyan'], $column_width);
-            $formatted_description .= $this->getLogsSummary();
+            //$formatted_description .= $this->getLogsSummary();
             return $formatted_description;
         } else {
             return "No application found." . PHP_EOL;
@@ -82,6 +82,7 @@ class SiteInspector {
     }
 
     protected function getLogsSummary() : string {
+        return ""; //
         $colors = $this->application->getColors();
         $s = $colors['orange'] . 'Logs' . PHP_EOL .  $colors['blue'];
         if ($this->application->hasLogs()) {
@@ -100,7 +101,6 @@ class SiteInspector {
         $indent_required = false;
         $loop_no = 0;
         do {
-
             if ($indent_required) {
                 $s .= '   ';
                 $line_width = $width - 3;
