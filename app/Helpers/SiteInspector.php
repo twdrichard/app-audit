@@ -121,7 +121,7 @@ class SiteInspector {
     }
 
     protected function combineTextSideBySide(string $text1, string $text2, string $color1, string $color2, $column_width = 40) : string {
-        $left_lines = explode(PHP_EOL, $this->padTextToEqualLineLength($text1));
+        $left_lines = explode(PHP_EOL, $this->padTextToEqualLineLength($text1, $column_width));
         $right_lines = explode(PHP_EOL, $text2);
         $num_right_lines = count($right_lines);
         $num_left_lines = count($left_lines);
@@ -173,7 +173,7 @@ class SiteInspector {
         return $ar;
     }
 
-    protected function padTextToEqualLineLength($text, $num_spaces_to_add = 3) : string {
+    /*protected function padTextToEqualLineLength($text, $num_spaces_to_add = 3) : string {
         $lines = explode(PHP_EOL, $text);
         $max_line_length = $this->findMaxLineLength($lines);
         $line_length_required = $max_line_length + $num_spaces_to_add;
@@ -182,9 +182,17 @@ class SiteInspector {
             $output .= $this->padLineToLength($line, $line_length_required) . PHP_EOL;
         }
         return $output;
-    }
+    }*/
 
-    protected function findMaxLineLength($lines) : int {
+    protected function padTextToEqualLineLength($text, $line_length = 40) : string {
+        $lines = explode(PHP_EOL, $text);
+        $output = "";
+        foreach ($lines as $line) {
+            $output .= $this->padLineToLength($line, $line_length) . PHP_EOL;
+        }
+        return $output;
+    }
+        protected function findMaxLineLength($lines) : int {
         $max_length = 0;
         foreach ($lines as $line) {
             if (strlen($line) > $max_length) {
