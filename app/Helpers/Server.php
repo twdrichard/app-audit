@@ -49,12 +49,15 @@ class Server {
 
     public function executeLocalCommand(string $command) : string {
 		$output = [];
-		exec($command, $output, $result);
+		$exec_out = exec($command, $output, $result);
+        //echo "executeLocalCommand($command) with result '$result' exec_out '$exec_out' and output" . PHP_EOL;
+        //print_r($output);
+        //echo PHP_EOL;
         $this->last_command_result = $result;
         if (count($output)) {
             return implode("\n", $output);
 		}
-		return "none.";
+		return "";
     }
 
     public function executeRemoteCommand(string $command) : string {
@@ -132,11 +135,15 @@ class Server {
 		return false;
 	}
 
-    public function fileExists($filename) {
+    public function fileExists(string $filename) : bool {
 		$full_filename = trim($this->path) . DIRECTORY_SEPARATOR . $filename;
         $command = "test -f $full_filename";
         $result = $this->executeCommand($command);
-        return $result;
+        if ($this->last_command_result == 1) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 	protected function escapeString($s) {

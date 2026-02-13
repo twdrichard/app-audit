@@ -67,29 +67,6 @@ class WordPressApplicationInspector extends ApplicationInspector {
         return $this->formatUrlForDisplay($this->url);
     }
 
-    protected function removePHPErrors(string $s) : string {
-        $output = "";
-        $ar = explode(PHP_EOL, $s);
-        if ($ar) {
-            foreach ($ar as $line) {
-                if (!$this->isPHPError($line)) {
-                    $output .= $line . PHP_EOL;
-                }
-            }
-        }
-        return $output;
-    }
-
-    protected function isPHPError(string $line) : bool {
-        $error_notices = [ "Notice: ", "Error: ", "Warning: " ];
-        foreach ($error_notices as $error_notice) {
-            if (strpos($line, $error_notice) === 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public function getDescription() {
         $colors = $this->getColors();
         $s = $colors['green'] . "Linux version: " . $this->server->findLinuxPrettyName() . PHP_EOL;

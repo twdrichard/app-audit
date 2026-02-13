@@ -54,6 +54,7 @@ class PHPApplicationInspector extends ApplicationInspector {
         }
         if ($this->server->fileExists("artisan")) {
             $info = $this->server->executeCommand("php artisan --version", true);
+            $info = $this->removePHPErrors($info);
             $laravel_identifier =  "Laravel Framework ";
             $version_pos = strpos($info, $laravel_identifier);
             if ($version_pos !== false) {
@@ -75,10 +76,8 @@ class PHPApplicationInspector extends ApplicationInspector {
         $description = "";
         $description .= $this->getName() . PHP_EOL;
         $description .= $this->getDomain() . PHP_EOL;
-        ///$audit = $this->server->executeCommand('composer audit -d ' . $this->server->getFolder());
-        $audit = $this->server->executeCommand('composer audit', true); // -d ' . $this->server->getFolder());
+        $audit = $this->server->executeCommand('composer audit', true);
         $description .= $this->buildComposerAuditSummary($audit);
-
         return $description;
     }
 

@@ -52,6 +52,29 @@ class ApplicationInspector {
         return "Application Audit";
     }
 
+    protected function removePHPErrors(string $s) : string {
+        $output = "";
+        $ar = explode(PHP_EOL, $s);
+        if ($ar) {
+            foreach ($ar as $line) {
+                if (!$this->isPHPError($line)) {
+                    $output .= $line . PHP_EOL;
+                }
+            }
+        }
+        return $output;
+    }
+
+    protected function isPHPError(string $line) : bool {
+        $error_notices = [ "Notice: ", "Error: ", "Warning: " ];
+        foreach ($error_notices as $error_notice) {
+            if (strpos($line, $error_notice) === 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * @function hasLogs
      * @return bool true if this application has logs that can be shown
