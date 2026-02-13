@@ -140,9 +140,6 @@ class SiteInspector {
             $num_padding_lines = ($num_right_lines - $num_left_lines) / 2;
             $left_lines = $this->padArrayWithBlankLines($left_lines, $num_padding_lines, $column_width, $num_right_lines);
             $num_left_lines = $num_right_lines;
-            if (count($left_lines) != count($right_lines)) {
-                echo "After column padding we have " . count($left_lines) . " left and " . count($right_lines) . " right lines." . PHP_EOL;
-            }
         }
 
         $line_number = 0;
@@ -150,9 +147,6 @@ class SiteInspector {
             if ($line_left == "") {
                 $line_left = str_pad($line_left, $column_width);
             }
-            /*if (strlen($line_left) < $column_width) {
-                echo "Left line #$line_number is " . strlen($line_left) . " and should be $column_width chars." . PHP_EOL;
-            }*/
             $output .= $color1 . $line_left;
             if (isset($right_lines[$line_number])) {
                 $output .= $color2 . $right_lines[$line_number];
