@@ -67,7 +67,7 @@ class SiteInspector {
             $logo = $this->getAsciiLogo();
             $colors = $this->application->getColors();
             $title = $this->application->getTitle();
-            $description = $title . PHP_EOL . PHP_EOL . $this->application->getDescription();
+            $description = $title . PHP_EOL . $this->application->getDescription();
             $column_width = (int)($this->line_width / 2);
             if ($column_width < 10 || $column_width > 1000) {
                 //echo "Setting column width to 40 from $column_width" . PHP_EOL;
