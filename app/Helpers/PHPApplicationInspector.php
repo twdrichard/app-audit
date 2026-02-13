@@ -84,6 +84,9 @@ class PHPApplicationInspector extends ApplicationInspector {
         if (strpos($framework, "Laravel") === 0) {
             return 'laravel-ascii-logo.txt';
         }
+        if (strpos($framework, "Yii2") === 0) {
+            return 'yii2-ascii-logo.txt';
+        }
         return 'php-ascii-logo.txt';
     }
     public function getDescription() {
