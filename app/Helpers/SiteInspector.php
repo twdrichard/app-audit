@@ -40,6 +40,7 @@ class SiteInspector {
         foreach ($this->applications as $application) {
             if ($application->isOnServer($this->server)) {
                 $this->application = $application;
+                $this->application->setLineWidth($this->line_width);
                 return $application->getName();
             }
         }

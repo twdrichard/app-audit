@@ -12,14 +12,20 @@ use App\Helpers\Server;
 class ApplicationInspector {
     protected Server $server;
     protected bool $is_valid;
+    protected int $line_width;
 
     public function __construct() {
         $this->is_valid = true;
+        $this->line_width = 80;
     }
 
     public function isOnServer(Server $server) {
         $this->server = $server;
         return false;
+    }
+
+    public function setLineWidth(int $w) {
+        $this->line_width = $w;
     }
 
     public function getName() {

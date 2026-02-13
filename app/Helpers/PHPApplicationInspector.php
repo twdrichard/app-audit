@@ -98,7 +98,7 @@ class PHPApplicationInspector extends ApplicationInspector {
         $colors = $this->getColors();
         $audit_lines = explode(PHP_EOL, $audit);
         $audit_items = $this->parseComposerAuditToArray($audit_lines);
-        $max_line_length = 40;
+        $max_line_length = (int)($this->line_width / 2);
         $s = "";
         foreach ($audit_items as $item) {
             $line = "";
