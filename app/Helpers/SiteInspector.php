@@ -103,14 +103,19 @@ class SiteInspector {
     protected function formatColumnLinesToWidth(array $lines, int $max_width) : array {
         $ar = [];
         foreach ($lines as $line) {
-            $display_line = $this->formatDisplayLine($line, $max_width);
+            $display_line = $this->formatDisplayLine($line, $max_width, true);
             if (strpos($display_line, PHP_EOL) !== false) {
                 $display_ar = explode(PHP_EOL, $display_line);
                 foreach ($display_ar as $line) {
-                    $ar []= $line;
+                    if ($line != '') {
+                        $ar []= $line;
+                    }
                 }
             } else {
-                $ar []= $display_line;
+                $display_line = str_replace(PHP_EOL, '', $display_line);
+                if ($display_line != '') {
+                    $ar []= $display_line;
+                }
             }
         }
         return $ar;
@@ -171,11 +176,6 @@ class SiteInspector {
             }
             $output .= $color1 . $line_left;
             if (isset($right_lines[$line_number])) {
-                /*$right_line = $right_lines[$line_number];
-                if (strlen($right_line) > $column_width) {
-                    $right_line = substr($right_line, 0, $column_width);
-                }
-                $output .= $color2 . $right_line;*/
                 $output .= $color2 . $right_lines[$line_number];
             }
             $output .= PHP_EOL;
