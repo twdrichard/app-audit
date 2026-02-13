@@ -26,7 +26,7 @@ class PHPApplicationInspector extends ApplicationInspector {
 
         // check for composer.json
         $composer = $this->getComposer();
-        if ($composer == '') {
+        if ($composer == []) {
             return false;
         }
         return true;
@@ -93,7 +93,6 @@ class PHPApplicationInspector extends ApplicationInspector {
         $description .= $this->buildComposerAuditSummary($audit);
         return $description;
     }
-
 
     protected function buildComposerAuditSummary(string $audit) : string {
         $colors = $this->getColors();
