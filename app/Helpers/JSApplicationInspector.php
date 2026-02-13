@@ -40,6 +40,10 @@ class JSApplicationInspector extends ApplicationInspector {
 
     protected function runNPMAuditDescription() : string {
         $audit = $this->server->executeCommand('npm audit --audit-level=moderate', true);
+        $audit_fail_message = "npm ERR! code ENOLOCK";
+        if (strpos($audit, $audit_fail_message) == 0) {
+            return "npm modules not found.";
+        }
         return $audit;
     }
 }
