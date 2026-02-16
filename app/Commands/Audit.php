@@ -8,7 +8,7 @@ use LaravelZero\Framework\Commands\Command;
 use App\Helpers\Server;
 use App\Helpers\SiteInspector;
 
-class ServerInf extends Command
+class Audit extends Command
 {
     /**
      * The name and signature of the console command.
