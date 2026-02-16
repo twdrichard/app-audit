@@ -135,10 +135,15 @@ class Server {
 		return false;
 	}
 
-    public function fileExists(string $filename) : bool {
-		$full_filename = trim($this->path) . DIRECTORY_SEPARATOR . $filename;
+    public function fileExists(string $filename, $add_path = true) : bool {
+        if ($add_path) {
+            $full_filename = trim($this->path) . DIRECTORY_SEPARATOR . $filename;
+        } else {
+            $full_filename = $filename;
+        }
         $command = "test -f $full_filename";
         $result = $this->executeCommand($command);
+        //echo "fileExists($filename) command $command result " . $this->last_command_result . PHP_EOL;
         if ($this->last_command_result == 1) {
             return false;
         } else {
@@ -146,7 +151,13 @@ class Server {
         }
     }
 
-	protected function escapeString($s) {
-		return "'" . $s . "'";
+    public function readFile(string $filename, $add_path = true) : bool {
+        if ($add_path) {
+            $full_filename = trim($this->path) . DIRECTORY_SEPARATOR . $filename;
+        } else {
+            $full_filename = $filename;
+        }
+        $command = "cat $full_filename";
+        return $this->executeCommand($command);
 	}
 }

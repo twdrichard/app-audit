@@ -108,7 +108,8 @@ class ApplicationInspector {
                     $full_filename .= DIRECTORY_SEPARATOR;
                 }
                 $full_filename .= $filename;
-                if (file_exists($full_filename)) {
+                if ($this->server->fileExists($full_filename, false)) {
+                //if (file_exists($full_filename, false)) {
                     return file_get_contents($full_filename);
                 }
             }

@@ -23,17 +23,18 @@ class PHPApplicationInspector extends ApplicationInspector {
 
     public function isOnServer(Server $server) {
         $this->server = $server;
-
         // check for composer.json
         $composer = $this->getComposer();
         if ($composer == []) {
+            echo "Composer not found, bailing..." . PHP_EOL;
+            exit();
             return false;
         }
         return true;
     }
 
     protected function getComposer() {
-        $file = $this->readFile('composer.json');
+        $file = $this->server->readFile('composer.json');
         if ($file) {
             $this->composer_ar = explode(PHP_EOL, $file);
         }
@@ -170,7 +171,7 @@ class PHPApplicationInspector extends ApplicationInspector {
         return '';
     }
     public function hasLogs() : bool {
-        return $this->server->fileExists($this->findDebugLogFilename());
+        return $this->server->fileExists($this->findDebugLogFilename(), false);
     }
 
     protected function findDebugLogFilename() : string {
@@ -188,6 +189,7 @@ class PHPApplicationInspector extends ApplicationInspector {
                 $ar = explode(PHP_EOL, $output);
                 return $ar;
             }
+            //echo "Log output not found - $command" . PHP_EOL;
         }
         return [];
     }
