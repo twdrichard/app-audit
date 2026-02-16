@@ -90,6 +90,16 @@ class PHPApplicationInspector extends ApplicationInspector {
         }
         return 'php-ascii-logo.txt';
     }
+
+    protected function isLaravel() : bool {
+        $framework = $this->findFrameworkName();
+        if (strpos($framework, "Laravel") === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function getDescription() {
         $description = $this->getName() . PHP_EOL;
         $description .= $this->getDomain() . PHP_EOL;
@@ -175,8 +185,12 @@ class PHPApplicationInspector extends ApplicationInspector {
     }
 
     protected function findDebugLogFilename() : string {
-        // Yii2
-        $debug_filename = $this->server->getFolder() . DIRECTORY_SEPARATOR .  "runtime" . DIRECTORY_SEPARATOR . "logs" . DIRECTORY_SEPARATOR . "app.log";
+        if ($this->isLaravel()) {
+            $debug_filename = $this->server->getFolder() . DIRECTORY_SEPARATOR .  "storage" . DIRECTORY_SEPARATOR . "logs" . DIRECTORY_SEPARATOR . "laravel.log";
+        } else {
+            // Yii2
+            $debug_filename = $this->server->getFolder() . DIRECTORY_SEPARATOR .  "runtime" . DIRECTORY_SEPARATOR . "logs" . DIRECTORY_SEPARATOR . "app.log";
+        }
         return $debug_filename;
     }
 
@@ -184,6 +198,7 @@ class PHPApplicationInspector extends ApplicationInspector {
         $log_filename = $this->findDebugLogFilename();
         if ($log_filename) {
             $command = "tail -10 $log_filename";
+            echo $command . PHP_EOL;
             $output = $this->server->executeCommand($command);
             if ($output) {
                 $ar = explode(PHP_EOL, $output);
