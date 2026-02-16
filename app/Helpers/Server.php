@@ -8,11 +8,14 @@
 namespace App\Helpers;
 
 class Server {
-    protected string $server_name, $path;
+    protected string $server_name, $path ,$hostname, $username, $key_filename;
     protected bool $is_local;
     protected int $last_command_result;
 
     public function __construct(string $server_name, string $path) {
+        $this->key_filename = '';
+        $this->username = '';
+
         $this->server_name = $server_name;
         $this->last_command_result = 0;
         $this->is_local = ($server_name == "local");
@@ -61,8 +64,14 @@ class Server {
     }
 
     public function executeRemoteCommand(string $command) : string {
-		$ssh_command = 'ssh ' . $this->server_name . ' "' . $command . '"';
+		$ssh_command = $this->buildSSHCommand() . ' "' . $command . '"';
         return $this->executeLocalCommand($ssh_command);
+    }
+
+    protected function buildSSHCommand() : string {
+		$ssh_command = 'ssh ' . $this->server_name . ' "' . $command . '"';
+        // todo: add support for individual host, username and identity rather than just alias
+        return $ssh_command;
     }
 
     protected function getSSHCommand(string $command) : string {
