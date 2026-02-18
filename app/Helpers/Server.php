@@ -64,12 +64,12 @@ class Server {
     }
 
     public function executeRemoteCommand(string $command) : string {
-		$ssh_command = $this->buildSSHCommand() . ' "' . $command . '"';
+		$ssh_command = $this->buildSSHConnection() . ' "' . $command . '"';
         return $this->executeLocalCommand($ssh_command);
     }
 
-    protected function buildSSHCommand() : string {
-		$ssh_command = 'ssh ' . $this->server_name . ' "' . $command . '"';
+    protected function buildSSHConnection() : string {
+		$ssh_command = 'ssh ' . $this->server_name;
         // todo: add support for individual host, username and identity rather than just alias
         return $ssh_command;
     }

@@ -198,7 +198,6 @@ class PHPApplicationInspector extends ApplicationInspector {
         $log_filename = $this->findDebugLogFilename();
         if ($log_filename) {
             $command = "tail -10 $log_filename";
-            echo $command . PHP_EOL;
             $output = $this->server->executeCommand($command);
             if ($output) {
                 $ar = explode(PHP_EOL, $output);
