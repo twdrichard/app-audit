@@ -47,7 +47,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
 
     public function getTitle() : string {
         $colors = $this->getColors();
-        return "WordPress audit on " . date('j M Y') . PHP_EOL . $colors['yellow'] . $this->getDomain();
+        return "WordPress audit on " . date('j M Y') . PHP_EOL . $colors['green'] . $this->getDomain();
     }
 
     /**
@@ -210,7 +210,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
                                 $plugin_description = $colors['blue'];
                                 $plugin_description .= $plugin_name;
                                 if ($update_available == 'available') {
-                                    $plugin_description .= $colors['red'];
+                                    $plugin_description .= $colors['orange'];
                                     $plugin_description .= ' v' . $version . ' (out of date)';
                                 } else {
                                     $plugin_description .= ' v' . $version;
