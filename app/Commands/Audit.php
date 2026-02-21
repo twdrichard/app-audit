@@ -8,18 +8,17 @@ use LaravelZero\Framework\Commands\Command;
 use App\Helpers\Server;
 use App\Helpers\SiteInspector;
 
-class ServerInf extends Command
+class Audit extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    //protected $signature = 'audit {server} {identity=none} {--username=none} {path=httpdocs}';
     protected $signature = 'audit
-        {server : The server SSH alias.}
-        {identity? : SSH identity key}
+        {server : The server SSH alias or host}
         {username? : server username}
+        {identity? : SSH identity key}
         {path=httpdocs : The application file path}';
 
     /**

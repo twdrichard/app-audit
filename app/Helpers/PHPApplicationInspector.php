@@ -23,17 +23,18 @@ class PHPApplicationInspector extends ApplicationInspector {
 
     public function isOnServer(Server $server) {
         $this->server = $server;
-
         // check for composer.json
         $composer = $this->getComposer();
         if ($composer == []) {
+            echo "Composer not found, bailing..." . PHP_EOL;
+            exit();
             return false;
         }
         return true;
     }
 
     protected function getComposer() {
-        $file = $this->readFile('composer.json');
+        $file = $this->server->readFile('composer.json');
         if ($file) {
             $this->composer_ar = explode(PHP_EOL, $file);
         }
@@ -89,6 +90,16 @@ class PHPApplicationInspector extends ApplicationInspector {
         }
         return 'php-ascii-logo.txt';
     }
+
+    protected function isLaravel() : bool {
+        $framework = $this->findFrameworkName();
+        if (strpos($framework, "Laravel") === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function getDescription() {
         $description = $this->getName() . PHP_EOL;
         $description .= $this->getDomain() . PHP_EOL;
@@ -170,12 +181,16 @@ class PHPApplicationInspector extends ApplicationInspector {
         return '';
     }
     public function hasLogs() : bool {
-        return $this->server->fileExists($this->findDebugLogFilename());
+        return $this->server->fileExists($this->findDebugLogFilename(), false);
     }
 
     protected function findDebugLogFilename() : string {
-        // Yii2
-        $debug_filename = $this->server->getFolder() . DIRECTORY_SEPARATOR .  "runtime" . DIRECTORY_SEPARATOR . "logs" . DIRECTORY_SEPARATOR . "app.log";
+        if ($this->isLaravel()) {
+            $debug_filename = $this->server->getFolder() . DIRECTORY_SEPARATOR .  "storage" . DIRECTORY_SEPARATOR . "logs" . DIRECTORY_SEPARATOR . "laravel.log";
+        } else {
+            // Yii2
+            $debug_filename = $this->server->getFolder() . DIRECTORY_SEPARATOR .  "runtime" . DIRECTORY_SEPARATOR . "logs" . DIRECTORY_SEPARATOR . "app.log";
+        }
         return $debug_filename;
     }
 
@@ -188,6 +203,7 @@ class PHPApplicationInspector extends ApplicationInspector {
                 $ar = explode(PHP_EOL, $output);
                 return $ar;
             }
+            //echo "Log output not found - $command" . PHP_EOL;
         }
         return [];
     }
