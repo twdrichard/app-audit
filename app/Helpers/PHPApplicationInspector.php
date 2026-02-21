@@ -26,15 +26,17 @@ class PHPApplicationInspector extends ApplicationInspector {
         // check for composer.json
         $composer = $this->getComposer();
         if ($composer == []) {
-            echo "Composer not found, bailing..." . PHP_EOL;
-            exit();
             return false;
         }
         return true;
     }
 
     protected function getComposer() {
-        $file = $this->server->readFile('composer.json');
+        $composer_filename = 'composer.json';
+        if (!$this->server->fileExists($composer_filename)) {
+            return [];
+        }
+        $file = $this->server->readFile($composer_filename);
         if ($file) {
             $this->composer_ar = explode(PHP_EOL, $file);
         }
