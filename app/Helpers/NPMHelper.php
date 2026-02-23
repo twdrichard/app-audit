@@ -9,6 +9,7 @@ namespace App\Helpers;
 
 use App\Helpers\Server;
 use App\Helpers\NPMAuditSection;
+use App\Helpers\NPMOutdatedSection;
 
 class NPMHelper {
     protected Server $server;
@@ -18,13 +19,19 @@ class NPMHelper {
     }
 
     public function buildOutdatedDescription(array $colors) : string {
-        $outdated = $this->server->executeCommand('npm audit outdated', true);
-        if ($outdated == '') {
+        $report = $this->server->executeCommand('npm outdated', true);
+        if ($report == '') {
             return "No outdated modules found.";
         }
-        return "Outdated: " . $outdated;
+        $outdated = $colors['green'] . "Outdated modules" . PHP_EOL;
+        $sections = $this->parseNPMOutdatedReportIntoSections($report);
+        if ($sections) {
+            foreach ($sections as $section) {
+                $outdated .= $section->getSummary($colors) . PHP_EOL;
+            }
+        }
+        return $outdated;
     }
-
 
     public function buildAuditDescription(array $colors) : string {
         $audit = $this->server->executeCommand('npm audit --audit-level=moderate', true);
@@ -32,15 +39,26 @@ class NPMHelper {
         if (strpos($audit, $audit_fail_message) === 0) {
             return "npm modules not found.";
         }
+        $report = "";
+        $report = $colors['green'] . "Known issues" . PHP_EOL;
         $sections = $this->parseNPMReportIntoSections($audit);
         if ($sections) {
-            $audit = "";
-            $audit = "Found " . count($sections) . " audit sections." . PHP_EOL;
             foreach ($sections as $section) {
-                $audit .= $section->getSummary($colors) . PHP_EOL;
+                $report .= $section->getSummary($colors) . PHP_EOL;
             }
         }
-        return $audit;
+        return $report;
+    }
+
+    protected function parseNPMOutdatedReportIntoSections(string $report) : array {
+        $sections = [];
+        $lines = explode(PHP_EOL, $report);
+        foreach ($lines as $line) {
+            if ($line != "" && $line != "\r") {
+                $sections []= new NPMOutdatedSection($line);
+            }
+        }
+        return $sections;
     }
 
     protected function parseNPMReportIntoSections(string $report) : array {

@@ -7,8 +7,6 @@
 
 namespace App\Helpers;
 
-use App\Helpers\NPMAuditSection;
-
 class NPMAuditSection {
     protected array $lines;
     protected string $name, $severity, $description;
