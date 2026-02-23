@@ -9,6 +9,7 @@ namespace App\Helpers;
 
 use App\Helpers\Server;
 use App\Helpers\ApplicationInspector;
+use App\Helpers\NPMHelper;
 
 class JSApplicationInspector extends ApplicationInspector {
     protected bool $has_composer_json;
@@ -34,16 +35,10 @@ class JSApplicationInspector extends ApplicationInspector {
     public function getDescription() {
         $description = "";
         $description .= $this->getName() . PHP_EOL;
-        $description .= $this->runNPMAuditDescription() . PHP_EOL;
-        return $description;
-    }
 
-    protected function runNPMAuditDescription() : string {
-        $audit = $this->server->executeCommand('npm audit --audit-level=moderate', true);
-        $audit_fail_message = "npm ERR! code ENOLOCK";
-        if (strpos($audit, $audit_fail_message) === 0) {
-            return "npm modules not found.";
-        }
-        return $audit;
+        $npm = new NPMHelper($this->server);
+        $description .= $npm->buildAuditDescription() . PHP_EOL;
+        //$description .= $npm->buildOutdatedDescription() . PHP_EOL;
+        return $description;
     }
 }
