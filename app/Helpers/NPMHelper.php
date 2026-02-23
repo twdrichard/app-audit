@@ -17,7 +17,7 @@ class NPMHelper {
         $this->server = $server;
     }
 
-    public function buildOutdatedDescription() : string {
+    public function buildOutdatedDescription(array $colors) : string {
         $outdated = $this->server->executeCommand('npm audit outdated', true);
         if ($outdated == '') {
             return "No outdated modules found.";
@@ -26,7 +26,7 @@ class NPMHelper {
     }
 
 
-    public function buildAuditDescription() : string {
+    public function buildAuditDescription(array $colors) : string {
         $audit = $this->server->executeCommand('npm audit --audit-level=moderate', true);
         $audit_fail_message = "npm ERR! code ENOLOCK";
         if (strpos($audit, $audit_fail_message) === 0) {
@@ -35,8 +35,9 @@ class NPMHelper {
         $sections = $this->parseNPMReportIntoSections($audit);
         if ($sections) {
             $audit = "";
+            $audit = "Found " . count($sections) . " audit sections." . PHP_EOL;
             foreach ($sections as $section) {
-                $audit .= $section->getSummary() . PHP_EOL;
+                $audit .= $section->getSummary($colors) . PHP_EOL;
             }
         }
         return $audit;
@@ -44,16 +45,25 @@ class NPMHelper {
 
     protected function parseNPMReportIntoSections(string $report) : array {
         $report = $this->removeUnneededInfo($report);
+        $lines = explode(PHP_EOL, $report);
         $sections = [];
-        //$paras = explode("\n\n", $report);
-        $paras = explode("\r\n\r\n", $report);
-        if ($paras && count($paras)) {
-            foreach ($paras as $para) {
-                $section = new NPMAuditSection($para);
-                if ($section->isValid()) {
-                    $sections []= $section;
+        $section_lines = [];
+        foreach ($lines as $line) {
+            if ($line == "" || $line == "\r") {
+                // blank line signals the end of a section
+                if (count($section_lines)) {
+                    $sections []= new NPMAuditSection($section_lines);
+                    $section_lines = [];
                 }
+            } else {
+                $section_lines []= $line;
             }
+        }
+
+        // add a final section if needed
+        if (count($section_lines)) {
+            $sections []= new NPMAuditSection($section_lines);
+            $section_lines = [];
         }
         return $sections;
     }

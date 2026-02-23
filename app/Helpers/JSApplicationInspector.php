@@ -37,7 +37,7 @@ class JSApplicationInspector extends ApplicationInspector {
         $description .= $this->getName() . PHP_EOL;
 
         $npm = new NPMHelper($this->server);
-        $description .= $npm->buildAuditDescription() . PHP_EOL;
+        $description .= $npm->buildAuditDescription($this->getColors()) . PHP_EOL;
         //$description .= $npm->buildOutdatedDescription() . PHP_EOL;
         return $description;
     }
