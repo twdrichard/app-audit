@@ -105,6 +105,7 @@ class PHPApplicationInspector extends ApplicationInspector {
     public function getDescription() {
         $description = $this->getName() . PHP_EOL;
         $description .= $this->getDomain() . PHP_EOL;
+        $description .= $this->server->getServerDescription($this->getColors());
         $audit = $this->server->executeCommand('composer audit', true);
         $description .= $this->buildComposerAuditSummary($audit);
         return $description;
