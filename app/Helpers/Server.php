@@ -90,6 +90,36 @@ class Server {
         return str_replace('"', '', $output);
     }
 
+
+
+    public function getUptime() : string {
+        $output = $this->executeCommand("uptime");
+        // parse time from output e.g. " 09:48:04 up 11 days, 16 min,  1 user,  load average: 0.04, 0.08, 0.08"
+        $up_id = " up ";
+        $up_pos = strpos($output, $up_id);
+        if ($up_pos !== false) {
+            $up_pos += strlen($up_id);
+            $user_id = " user";
+            $user_pos = strpos($output, $user_id, $up_pos);
+            if ($user_pos !== false) {
+                $len = $user_pos - $up_pos;
+                $uptime = substr($output, $up_pos, $len);
+                $comma_pos = strrpos($uptime, ", ");
+                if ($comma_pos !== false) {
+                    $uptime = substr($uptime, 0, $comma_pos);
+                }
+                return $uptime;
+            }
+        }
+        return $output;
+    }
+
+    public function getServerDescription(array $colors) : string {
+        $s = $colors['green'] . "Linux version: " . $this->findLinuxPrettyName() . PHP_EOL;
+        $s .= $colors['green'] . "Uptime " . $this->getUptime() . PHP_EOL;
+        return $s;
+    }
+
 	protected function probeServerApplication(string $application_name, array $server_spec) {
 		echo "Checking for application $application_name..." . PHP_EOL;
 		$ok = false;

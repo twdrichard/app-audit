@@ -69,7 +69,8 @@ class WordPressApplicationInspector extends ApplicationInspector {
 
     public function getDescription() {
         $colors = $this->getColors();
-        $s = $colors['green'] . "Linux version: " . $this->server->findLinuxPrettyName() . PHP_EOL;
+        $s = $this->server->getServerDescription($colors);
+        //$s = $colors['green'] . "Linux version: " . $this->server->findLinuxPrettyName() . PHP_EOL;
         $s .= $colors['blue'] .  "WordPress, core version " . $this->getCoreVersion();
         if ($this->coreIsOutOfDate()) {
 			  $s .= $colors['red'] . ' (out of date)';
