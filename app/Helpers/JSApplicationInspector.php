@@ -9,7 +9,6 @@ namespace App\Helpers;
 
 use App\Helpers\Server;
 use App\Helpers\ApplicationInspector;
-use App\Helpers\NPMHelper;
 
 class JSApplicationInspector extends ApplicationInspector {
     protected bool $has_composer_json;

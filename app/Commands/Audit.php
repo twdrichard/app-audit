@@ -2,7 +2,6 @@
 
 namespace App\Commands;
 
-use Illuminate\Console\Scheduling\Schedule;
 use LaravelZero\Framework\Commands\Command;
 
 use App\Helpers\Server;
@@ -17,9 +16,9 @@ class Audit extends Command
      */
     protected $signature = 'audit
         {server : The server SSH alias or host}
+        {folder=httpdocs : The application folder}
         {username? : server username}
-        {identity? : SSH identity key}
-        {path=httpdocs : The application file path}';
+        {identity? : SSH identity key}';
 
     /**
      * The console command description.
@@ -37,11 +36,14 @@ class Audit extends Command
     public function handle()
     {
         $server_name = $this->argument('server');
-        $path = $this->argument('path');
+        $folder = $this->argument('folder');
         $username = $this->argument('username');
         $identity = $this->argument('identity');
 
-        $this->server = new Server($server_name, $path);
+        //echo "Found server '$server_name' and folder '$folder' with username '$username' and identity '$identity'" . PHP_EOL;
+        //exit();
+
+        $this->server = new Server($server_name, $folder);
         $this->inspector = new SiteInspector($this->server);
         if (!$this->inspector->findApplicationType()) {
 			  echo "No application type found." . PHP_EOL;
