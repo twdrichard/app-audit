@@ -19,6 +19,8 @@ class WordPressApplicationInspector extends ApplicationInspector {
         $this->server = $server;
         $this->url = '';
 
+        $this->server->findFile('wp-config.php');
+
         if (!$this->server->fileExists('wp-config.php')) {
             return false;
         }

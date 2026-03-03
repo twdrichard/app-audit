@@ -25,7 +25,7 @@ class Server {
             if ($this->is_local) {
                 $this->path = '/var/www/html/';
             } else {
-                $this->path = 'httpdocs/';
+                $this->path = 'httpdocsx/';
             }
         }
     }
@@ -38,11 +38,14 @@ class Server {
         return $this->last_command_result;
     }
 
-    public function executeCommand(string $command, $use_path = false) : string {
+    public function executeCommand(string $command, $use_path = false, $suppress_errrors = true) : string {
         if ($use_path) {
             $command = "cd " . $this->path . " && " . $command;
         }
-        $command .= " 2>&1";    // suppress error output
+        if ($suppress_errrors) {
+            $command .= " 2>&1";    // suppress error output
+        }
+        echo "executeCommand($command)" . PHP_EOL;
         if ($this->is_local) {
             return $this->executeLocalCommand($command);
         } else {
@@ -182,12 +185,29 @@ class Server {
         }
         $command = "test -f $full_filename";
         $result = $this->executeCommand($command);
-        //echo "fileExists($filename) command $command result " . $this->last_command_result . PHP_EOL;
         if ($this->last_command_result == 1) {
             return false;
         } else {
             return true;
         }
+    }
+
+    public function findFile(string $filename) : ?string {
+        $folder = ""; //$this->path;
+        $command = 'find "' . $folder . '" -name ' . $filename;
+        echo "findFile executing $command" . PHP_EOL;
+        $result = $this->executeCommand($command, false, false);
+        echo $result . PHP_EOL;
+        if (strpos($result, "No such file or directory") !== false) {
+            return null;
+        }
+        echo "and returned with code " . $this->last_command_result . PHP_EOL;
+        if ($this->last_command_result == 0) {
+            $application_folder = str_replace($filename, '', $result);
+            $application_folder = str_replace($this->path, '', $result);
+            echo "Found application_folder '$application_folder'" . PHP_EOL;
+        }
+        exit();
     }
 
     public function readFile(string $filename, $add_path = true) : bool {
