@@ -45,7 +45,7 @@ class Server {
         if ($suppress_errrors) {
             $command .= " 2>&1";    // suppress error output
         }
-        echo "executeCommand($command)" . PHP_EOL;
+        //echo "executeCommand($command)" . PHP_EOL;
         if ($this->is_local) {
             return $this->executeLocalCommand($command);
         } else {

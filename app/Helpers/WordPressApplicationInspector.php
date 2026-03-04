@@ -19,7 +19,7 @@ class WordPressApplicationInspector extends ApplicationInspector {
         $this->server = $server;
         $this->url = '';
 
-        $this->server->findFile('wp-config.php');
+        //$this->server->findFile('wp-config.php');
 
         if (!$this->server->fileExists('wp-config.php')) {
             return false;
@@ -74,11 +74,16 @@ class WordPressApplicationInspector extends ApplicationInspector {
         $s = $this->server->getServerDescription($colors);
         $s .= $colors['blue'] .  "WordPress, core version " . $this->getCoreVersion();
         if ($this->coreIsOutOfDate()) {
-			  $s .= $colors['red'] . ' (out of date)';
-			} else {
-			  $s .= $colors['green'] . ' (latest version)';
-			}
-			$s .= PHP_EOL;
+          $s .= $colors['red'] . ' (out of date)';
+        } else {
+          $s .= $colors['green'] . ' (latest version)';
+        }
+        $s .= PHP_EOL;
+
+        $theme = $this->getCurrentTheme();
+        if ($theme) {
+            $s .= "Theme: $theme" . PHP_EOL;
+        }
         $s.= $this->getPluginsList();
         return $s;
     }
@@ -182,6 +187,15 @@ class WordPressApplicationInspector extends ApplicationInspector {
         } else {
             return "Plugins not found." . PHP_EOL;
         }
+    }
+
+    protected function getCurrentTheme() : string {
+        if ($this->has_cli) {
+            $folder = $this->server->getFolder();
+            $theme = $this->server->executeCommand("wp --path=$folder option get current_theme");
+            return $theme;
+        }
+        return "";
     }
 
     protected function formatPluginsList(string $plugins_list, $active_only = true) {
