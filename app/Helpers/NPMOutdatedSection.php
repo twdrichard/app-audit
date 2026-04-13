@@ -42,6 +42,9 @@ class NPMOutdatedSection {
         if (strpos($this->line, "Package") === 0) {
             return false;       // header line
         }
+        if (!isset($this->package)) {
+            return false;
+        }
         return $this->line != "";
     }
 }
