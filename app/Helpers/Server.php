@@ -195,19 +195,20 @@ class Server {
     public function findFile(string $filename) : ?string {
         $folder = ""; //$this->path;
         $command = 'find "' . $folder . '" -name ' . $filename;
-        echo "findFile executing $command" . PHP_EOL;
+        //echo "findFile executing $command" . PHP_EOL;
         $result = $this->executeCommand($command, false, false);
         echo $result . PHP_EOL;
         if (strpos($result, "No such file or directory") !== false) {
             return null;
         }
-        echo "and returned with code " . $this->last_command_result . PHP_EOL;
+        //echo "and returned with code " . $this->last_command_result . PHP_EOL;
         if ($this->last_command_result == 0) {
             $application_folder = str_replace($filename, '', $result);
             $application_folder = str_replace($this->path, '', $result);
             echo "Found application_folder '$application_folder'" . PHP_EOL;
         }
-        exit();
+        return null;            // temp Mar 21 2026
+//        exit();
     }
 
     public function readFile(string $filename, $add_path = true) : bool {
