@@ -7,25 +7,26 @@
 
 VALIDPARAMS=0
 
-if [ "$#" -eq 2  ]; then		# archive a folder and scp it
-	SSH_CONNECTION=$1
-	EMAIL_TO=$2
+if [ "$#" -eq 3  ]; then		# archive a folder and scp it
+	SITE_NAME=$1
+	SSH_CONNECTION=$2
+	EMAIL_TO=$3
 	VALIDPARAMS=1
 fi
 
 if [ "$VALIDPARAMS" -eq 0 ]; then
 	echo "$# params found"
-	echo "Usage: $0 ssh_connection_name email_to"
+	echo "Usage: $0 site_name ssh_connection_name email_to"
 	exit
 fi
 
-echo "Auditing $SSH_CONNECTION and emailing to $EMAIL_TO"
+echo "Auditing $SITE_NAME and emailing to $EMAIL_TO"
 
 TEMPFILE=$(mktemp --suffix ".html")
 TEMPFILE_WITH_HEADERS=$(mktemp --suffix ".html")
 
 ./application audit $SSH_CONNECTION | ansi2html > $TEMPFILE
-printf "Subject: $SSH_CONNECTION Audit Report\nMime-Version: 1.0\nContent-Type: text/html\n\n" | cat - $TEMPFILE > $TEMPFILE_WITH_HEADERS
+printf "Subject: $SITE_NAME Audit Report\nMime-Version: 1.0\nContent-Type: text/html\n\n" | cat - $TEMPFILE > $TEMPFILE_WITH_HEADERS
 cat  $TEMPFILE_WITH_HEADERS  | ssmtp $EMAIL_TO
 
 rm $TEMPFILE
