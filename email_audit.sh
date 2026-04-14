@@ -19,9 +19,13 @@ fi
 
 echo "Auditing $SSH_CONNECTION and emailing to $EMAIL_TO"
 
-TEMPFILE=/tmp/audit.html
-TEMPFILE_WITH_HEADERS=/tmp/audit_with_headers.html
+TEMPFILE=$(mktemp --suffix ".html")
+TEMPFILE_WITH_HEADERS=$(mktemp --suffix ".html")
 
 ./application audit $SSH_CONNECTION | ansi2html > $TEMPFILE
 printf "Subject: $SSH_CONNECTION Audit Report\nMime-Version: 1.0\nContent-Type: text/html\n\n" | cat - $TEMPFILE > $TEMPFILE_WITH_HEADERS
 cat  $TEMPFILE_WITH_HEADERS  | ssmtp $EMAIL_TO
+
+rm $TEMPFILE
+rm $TEMPFILE_WITH_HEADERS
+
