@@ -2,6 +2,8 @@
 # @file site_backup.sh
 # @author Richard@TowerWebDesign.co.uk
 # Audit a website, convert the report to html and email the report
+# Uses ansi2html https://github.com/pixelb/scripts/blob/master/scripts/ansi2html.sh
+# and ssmtp to send the email
 
 VALIDPARAMS=0
 
