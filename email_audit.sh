@@ -6,12 +6,17 @@
 # and ssmtp to send the email
 
 VALIDPARAMS=0
+FOLDER=""
 
-if [ "$#" -eq 3  ]; then		# archive a folder and scp it
+if [ "$#" -gt 2  ]; then		# archive a folder and scp it
 	SITE_NAME=$1
 	SSH_CONNECTION=$2
 	EMAIL_TO=$3
 	VALIDPARAMS=1
+fi
+
+if [ "$#" -eq 4  ]; then		# archive a folder and scp it
+    FOLDER=$4
 fi
 
 if [ "$VALIDPARAMS" -eq 0 ]; then
@@ -20,12 +25,12 @@ if [ "$VALIDPARAMS" -eq 0 ]; then
 	exit
 fi
 
-echo "Auditing $SITE_NAME and emailing to $EMAIL_TO"
+echo "Auditing $SITE_NAME folder '$FOLDER' and emailing to $EMAIL_TO"
 
 TEMPFILE=$(mktemp --suffix ".html")
 TEMPFILE_WITH_HEADERS=$(mktemp --suffix ".html")
 
-./application audit $SSH_CONNECTION | ansi2html > $TEMPFILE
+./application audit $SSH_CONNECTION $FOLDER | ansi2html > $TEMPFILE
 printf "Subject: $SITE_NAME Audit Report\nMime-Version: 1.0\nContent-Type: text/html\n\n" | cat - $TEMPFILE > $TEMPFILE_WITH_HEADERS
 cat  $TEMPFILE_WITH_HEADERS  | ssmtp $EMAIL_TO
 
