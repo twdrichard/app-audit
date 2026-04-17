@@ -42,5 +42,5 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "bin": ["serverinf"]
+    "bin": ["appaudit"]
 }
