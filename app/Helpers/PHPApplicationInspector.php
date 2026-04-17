@@ -32,15 +32,30 @@ class PHPApplicationInspector extends ApplicationInspector {
     }
 
     protected function getComposer() {
-        $composer_filename = 'composer.json';
-        if (!$this->server->fileExists($composer_filename)) {
-            return [];
-        }
-        $file = $this->server->readFile($composer_filename);
-        if ($file) {
-            $this->composer_ar = explode(PHP_EOL, $file);
+        if ($this->composer_ar == []) {
+            $composer_filename = 'composer.json';
+            if (!$this->server->fileExists($composer_filename)) {
+                echo "No composer.json found on server." . PHP_EOL;
+                return [];
+            }
+            $file = $this->server->readFile($composer_filename);
+            if ($file) {
+                $this->composer_ar = explode(PHP_EOL, $file);
+            }
         }
         return $this->composer_ar;
+    }
+
+    protected function composerHasComponent(string $component_name) {
+        $composer_ar = $this->getComposer();
+        if ($composer_ar) {
+            foreach ($composer_ar as $composer_line) {
+                if (strpos($composer_line, $component_name) !== false) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public function getName() : string {
@@ -72,6 +87,11 @@ class PHPApplicationInspector extends ApplicationInspector {
                 $this->framework_name = str_replace(PHP_EOL, '', $framework);
                 return $this->framework_name;
             }
+        }
+        if ($this->composerHasComponent("laravel-zero")) {
+            $framework = "Laravel Zero";
+            $this->framework_name = str_replace(PHP_EOL, '', $framework);
+            return $this->framework_name;
         }
 
         $this->framework_name = "PHP Application";

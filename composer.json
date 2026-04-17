@@ -1,14 +1,14 @@
 {
-    "name": "twd/serverinf",
-    "description": "Server infomation tool",
+    "name": "twd/appaudit",
+    "description": "Application audit tool",
     "keywords": ["console", "cli"],
-    "homepage": "https://towerwebdesign.co.uk/serverinf",
+    "homepage": "https://towerwebdesign.co.uk/appaudit",
     "type": "utility",
     "license": "MIT",
     "authors": [
         {
             "name": "Richard Brown",
-            "email": "richard@pasturehouses.co.uk"
+            "email": "richard@towerwebdesign.co.uk"
         }
     ],
     "require": {

@@ -45,7 +45,6 @@ class Server {
         if ($suppress_errrors) {
             $command .= " 2>&1";    // suppress error output
         }
-        //echo "executeCommand($command)" . PHP_EOL;
         if ($this->is_local) {
             return $this->executeLocalCommand($command);
         } else {
@@ -56,11 +55,11 @@ class Server {
     public function executeLocalCommand(string $command) : string {
 		$output = [];
 		$exec_out = exec($command, $output, $result);
-        //echo "executeLocalCommand($command) with result '$result' exec_out '$exec_out' and output" . PHP_EOL;
-        //print_r($output);
-        //echo PHP_EOL;
+        //echo "executeLocalCommand($command) with result '$result' exec_out '$exec_out' and output " . print_r($output, true) . PHP_EOL;
         $this->last_command_result = $result;
-        if (count($output)) {
+        if (is_array($output) && count($output)) {
+            //echo "Returning imploded array..." . PHP_EOL;
+            //echo implode("\n", $output);
             return implode("\n", $output);
 		}
 		return "";
@@ -92,8 +91,6 @@ class Server {
         $output = str_replace('PRETTY_NAME=', '', $output);
         return str_replace('"', '', $output);
     }
-
-
 
     public function getUptime() : string {
         $output = $this->executeCommand("uptime");
@@ -208,10 +205,9 @@ class Server {
             echo "Found application_folder '$application_folder'" . PHP_EOL;
         }
         return null;            // temp Mar 21 2026
-//        exit();
     }
 
-    public function readFile(string $filename, $add_path = true) : bool {
+    public function readFile(string $filename, $add_path = true) : string {
         if ($add_path) {
             $full_filename = trim($this->path) . DIRECTORY_SEPARATOR . $filename;
         } else {
