@@ -12,11 +12,11 @@ use App\Helpers\ApplicationInspector;
 
 class JSApplicationInspector extends ApplicationInspector {
     protected bool $has_composer_json;
-    protected array $composer_ar;
+    protected array $package_ar;
 
     public function __construct() {
         parent::__construct();
-        $this->composer_ar = [];
+        $this->package_ar = [];
     }
 
     public function isOnServer(Server $server) {
@@ -25,12 +25,52 @@ class JSApplicationInspector extends ApplicationInspector {
     }
 
     public function getName() : string {
-        return "JS Application";
+        if ($this->isReact()) {
+            return "JS React Application";
+        } else {
+            return "JS Application";
+        }
     }
 
-     public function getAsciiLogoFilename() : string {
-        return 'js-ascii-logo.txt';
+    public function getAsciiLogoFilename() : string {
+        if ($this->isReact()) {
+            return 'react-ascii-logo.txt';
+        } else {
+            return 'js-ascii-logo.txt';
+        }
     }
+
+    protected function isReact() : bool {
+        return $this->packageHasComponent("react");
+    }
+
+    protected function getPackageJson() {
+        if ($this->package_ar == []) {
+            $filename = 'package.json';
+            if (!$this->server->fileExists($filename)) {
+                return [];
+            }
+            $file = $this->server->readFile($filename);
+            if ($file) {
+                $this->package_ar = explode(PHP_EOL, $file);
+            }
+        }
+        return $this->package_ar;
+    }
+
+    protected function packageHasComponent(string $component_name) {
+        $component_name = '"' . $component_name . '":';
+        $package_ar = $this->getPackageJson();
+        if ($package_ar) {
+            foreach ($package_ar as $package_line) {
+                if (strpos($package_line, $component_name) !== false) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public function getDescription() {
         $description = "";
         $description .= $this->getName() . PHP_EOL;

@@ -18,7 +18,8 @@ composer install
 
 ## 🚀 Usage instructions
 
-then run app audit from the command line
+Run app audit from the command line.
+The target server needs to be a linux server with passwordless ssh connection.
 
 ```bash
 ./application audit ssh-target-name
@@ -26,8 +27,14 @@ then run app audit from the command line
 ```
 ![example](./screenshot.png)
 
-An outdated laravel-react starter app
+Or you can audit a local app if you're using linux
 
+e.g. An outdated laravel-react starter app
+
+```bash
+./application audit local folder
+
+```
 ![example](./laravel-react.png)
 
 ## ℹ️ Requirements
