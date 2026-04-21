@@ -26,6 +26,10 @@ then run app audit from the command line
 ```
 ![example](./screenshot.png)
 
+An outdated laravel-react starter app
+
+![example](./laravel-react.png)
+
 ## ℹ️ Requirements
 
 PHP 8.2 or greater
