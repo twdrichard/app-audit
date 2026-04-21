@@ -37,6 +37,10 @@ e.g. An outdated laravel-react starter app
 ```
 ![example](./laravel-react.png)
 
+A react app needing some updates
+
+![example](./react.png)
+
 ## ℹ️ Requirements
 
 PHP 8.2 or greater
