@@ -22,7 +22,7 @@ Run app audit from the command line.
 The target server needs to be a linux server with passwordless ssh connection.
 
 ```bash
-./application audit ssh-target-name
+./application audit {ssh-target-name}
 
 ```
 ![example](./screenshot.png)
@@ -32,7 +32,7 @@ Or you can audit a local app if you're using linux
 e.g. An outdated laravel-react starter app
 
 ```bash
-./application audit local folder
+./application audit local {folder-name}
 
 ```
 ![example](./laravel-react.png)
