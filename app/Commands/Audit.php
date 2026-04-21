@@ -31,7 +31,7 @@ class Audit extends Command
     protected SiteInspector $inspector;
 
     /**
-     * Execute the console command.
+     * Execute the audit command.
      */
     public function handle()
     {
@@ -39,9 +39,6 @@ class Audit extends Command
         $folder = $this->argument('folder');
         $username = $this->argument('username');
         $identity = $this->argument('identity');
-
-        //echo "Found server '$server_name' and folder '$folder' with username '$username' and identity '$identity'" . PHP_EOL;
-        //exit();
 
         $this->server = new Server($server_name, $folder);
         $this->inspector = new SiteInspector($this->server);

@@ -90,7 +90,7 @@ class SiteInspector {
                 $s .= $this->formatDisplayLine($line, $this->line_width);
             }
         } else {
-            $s .= "No log files found." . PHP_EOL;
+            return '';
         }
         return $s;
     }
