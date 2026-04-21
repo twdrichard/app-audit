@@ -35,7 +35,6 @@ class PHPApplicationInspector extends ApplicationInspector {
         if ($this->composer_ar == []) {
             $composer_filename = 'composer.json';
             if (!$this->server->fileExists($composer_filename)) {
-                echo "No composer.json found on server." . PHP_EOL;
                 return [];
             }
             $file = $this->server->readFile($composer_filename);
